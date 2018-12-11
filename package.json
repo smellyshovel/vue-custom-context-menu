@@ -1,0 +1,19 @@
+{
+  "name": "vue-context-menu",
+  "version": "0.1.0",
+  "description": "[In development]",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smellyshovel/vue-context-menu.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/smellyshovel/vue-context-menu/issues"
+  },
+  "homepage": "https://github.com/smellyshovel/vue-context-menu#readme"
+}

@@ -73,13 +73,13 @@
 
 <style>
     #cm-overlay {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        display: block !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        overflow: hidden !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
         z-index: 10000;
     }
 </style>

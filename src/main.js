@@ -7,7 +7,7 @@ export default {
     install(Vue) {
         Vue.directive("contextMenu", ContextMenuDirective);
 
-        Vue.component("contextMenus", OverlayComponent);
+        Vue.component("cm-overlay", OverlayComponent);
         Vue.component("contextMenu", MenuComponent);
         Vue.component("cmItem", ItemComponent);
     }

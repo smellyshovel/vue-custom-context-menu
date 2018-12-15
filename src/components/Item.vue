@@ -91,3 +91,11 @@
         }
     }
 </script>
+
+<style>
+    .cm-item {
+        padding: 1rem;
+        background-color: rgb(241, 241, 241);
+        border-radius: 5px;
+    }
+</style>

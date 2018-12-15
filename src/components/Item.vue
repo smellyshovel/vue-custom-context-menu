@@ -6,7 +6,8 @@
         @mouseleave="selectionAborted"
         @mousedown="itemTriggered"
 
-    ><slot></slot></li>
+        ><slot></slot>
+    </li>
 </template>
 
 <script>
@@ -14,7 +15,6 @@
         props: {
             action: Function
         },
-
 
         data() {return {
             calls: null
@@ -45,7 +45,7 @@
                         // delay opening of the target one
                         this.calls.delayedOpen(event, this.$el, this.cm);
                     }
-                // if the cursor enters a not-caller item
+                // if the cursor enters a not-a-caller item
                 } else {
                     // and if there's an opened sub
                     if (this.cm.sub) {
@@ -77,7 +77,7 @@
                         // immediately open the target one
                         this.calls.immediateOpen(event, this.$el, this.cm);
                     }
-                // if a not-caller item is pressed
+                // if a not-a-caller item is pressed
                 } else {
                     // perform the item's action (if any)
                     if (this.action) {

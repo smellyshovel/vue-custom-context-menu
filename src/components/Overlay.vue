@@ -21,38 +21,26 @@
         },
 
         mounted() {
-            if (this.penetrable) {
-                this.$nextTick(() => {
-                    this.$el.addEventListener("mousedown", this.listeners.closePenetrable);
-                });
-            } else {
-                this.$nextTick(() => {
-                    this.$el.addEventListener("mousedown", this.listeners.closeImpenetrable);
-                });
-            }
-        },
+            this.$nextTick(() => {
+                if (this.penetrable) {
+                    this.$el.addEventListener("mousedown", (event) => {
+                        // without this hack "contextmenu" event would trigger on the overlay
+                        this.$el.style.display = "none";
 
-        unmounted() {
-            if (this.penetrable) {
-                this.$el.removeEventListener("mousedown", this.listeners.closePenetrable);
-            } else {
-                this.$el.removeEventListener("mousedown", this.listeners.closeImpenetrable);
-            }
+                        this.close();
+                    });
+                } else {
+                    this.$el.addEventListener("mousedown", (event) => {
+                        this.close();
+                    });
+                }
+            });
         },
 
         data() {return {
             show: false,
 
             listeners: {
-                closePenetrable: (event) => {
-                    this.$el.style.display = "none";
-                    this.close();
-                },
-
-                closeImpenetrable: (event) => {
-                    this.close();
-                },
-
                 closeOnEscKey: (event) => {
                     if (event.keyCode === 27) {
                         this.close();
@@ -64,19 +52,19 @@
         methods: {
             open() {
                 this.show = true;
+
                 document.documentElement.style.overflow = "hidden";
-                
                 document.addEventListener("keydown", this.listeners.closeOnEscKey);
             },
 
             close(event) {
                 this.show = false;
-                document.documentElement.style.overflow = "";
 
                 this.$children.forEach((child) => {
                     child.immediateClose();
                 });
 
+                document.documentElement.style.overflow = "";
                 document.removeEventListener("keydown", this.listeners.closeOnEscKey);
             }
         }
@@ -85,14 +73,13 @@
 
 <style>
     #cm-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        display: block;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.5);
-        overflow: hidden;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        display: block !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        overflow: hidden !important;
         z-index: 10000;
     }
 </style>

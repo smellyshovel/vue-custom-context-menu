@@ -1,9 +1,15 @@
 export default {
     bind: function(el, binding, vNode) {
         let findOverlayAndCm = () => {
-            let overlay = vNode.context.$children.find((child) => {
-                return child.$options._componentTag === "context-menus";
-            });
+            if ("cm-stack" in vNode.context.$refs) {
+                var overlay = vNode.context.$refs["cm-stack"].$children.find((child) => {
+                    return child.$options._componentTag === "cm-overlay";
+                });
+            } else {
+                var overlay = vNode.context.$children.find((child) => {
+                    return child.$options._componentTag === "cm-overlay";
+                });
+            }
 
             let cm = overlay.$children.find((child) => {
                 return child.$el === document.querySelector(binding.value);

@@ -56,13 +56,13 @@
             open(event, caller) {
                 console.log("Opening #" + this.$el.id + "...");
 
-                this.style.left = "0px";
-                this.style.top = "0px";
                 this.show = true;
 
-                setTimeout(() => {
-                    this.setPosition(event, caller);
-                }, 100);
+                this.setPosition(event, caller);
+
+                this.$nextTick(() => {
+                    this.adjustPosition(caller);
+                });
             },
 
             abstractOpen(event, caller, parent) {
@@ -89,7 +89,7 @@
 
                 this.openTimer = setTimeout(() => {
                     this.abstractOpen(event, caller, parent);
-                }, this.normalizedOptions.delay);
+                }, parent.normalizedOptions.delay);
             },
 
             cancelDelayedOpen() {
@@ -133,7 +133,7 @@
 
                 this.closeTimer = setTimeout(() => {
                     this.abstractClose();
-                }, this.normalizedOptions.delay);
+                }, parent.normalizedOptions.delay);
             },
 
             cancelDelayedClose() {
@@ -153,31 +153,32 @@
             },
 
             setPosition(event, caller) {
-                let clickedX = event.clientX,
-                    clickedY = event.clientY;
-
-                let viewportWidth = this.overlay.$el.getBoundingClientRect().width,
-                    viewportHeight = this.overlay.$el.getBoundingClientRect().height;
-
-                let cmWidth = parseFloat(window.getComputedStyle(this.$el).getPropertyValue("width")),
-                    cmHeight = this.$el.getBoundingClientRect().height;
-
-                let furthestX = clickedX + cmWidth,
-                    furthestY = clickedY + cmHeight;
-
-                if (!caller) {
-                    this.style.left = clickedX;
-                    this.style.top = clickedY;
-                } else {
+                if (caller) {
                     this.style.left = caller.getBoundingClientRect().right;
                     this.style.top = caller.getBoundingClientRect().top;
+                } else {
+                    this.style.left = event.clientX;
+                    this.style.top = event.clientY;
                 }
 
-                console.log(viewportWidth);
+                this.style.left += "px";
+                this.style.top += "px";
+            },
+
+            adjustPosition(caller) {
+                let viewportWidth = this.overlay.$el.getBoundingClientRect().width;
+                let viewportHeight = this.overlay.$el.getBoundingClientRect().height;
+
+                let cmWidth = this.$el.getBoundingClientRect().width;
+                let cmHeight = this.$el.getBoundingClientRect().height;
+
+                let furthestX = this.$el.getBoundingClientRect().right;
+                let furthestY = this.$el.getBoundingClientRect().bottom;
+
                 if (furthestX >= viewportWidth) {
                     if (this.normalizedOptions.transfer === "x" || this.normalizedOptions.transfer === "both") {
                         if (!caller) {
-                            this.style.left -= cmWidth;
+                            this.style.left = parseFloat(this.style.left) - cmWidth;
                         } else {
                             this.style.left = caller.getBoundingClientRect().left - cmWidth;
                         }
@@ -189,7 +190,7 @@
                 if (furthestY >= viewportHeight) {
                     if (this.normalizedOptions.transfer === "y" || this.normalizedOptions.transfer === "both") {
                         if (!caller) {
-                            this.style.top -= cmHeight;
+                            this.style.top = parseFloat(this.style.top) - cmHeight;
                         } else {
                             this.style.top = caller.getBoundingClientRect().bottom - cmHeight;
                         }
@@ -204,3 +205,20 @@
         }
     }
 </script>
+
+<style>
+    .cm {
+        position: absolute;
+        display: block;
+        padding: 1rem;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 1px 5px rgb(60, 60, 60);
+    }
+
+    .cm > ol {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+</style>

@@ -10,9 +10,11 @@
             @mouseenter="preventCollapsing"
             @mousedown.stop
 
-            ><ol>
-                <slot></slot>
-            </ol>
+            ><div>
+                <ol>
+                    <slot></slot>
+                </ol>
+            </div>
         </div>
     </transition>
 </template>
@@ -32,12 +34,20 @@
                 top: 0
             },
 
+            height: 0,
+
             parent: null,
             sub: null,
 
             openTimer: null,
             closeTimer: null
         }},
+
+        watch: {
+            height(newValue) {
+                this.$set(this.style, "height", newValue);
+            }
+        },
 
         computed: {
             overlay() {
@@ -60,6 +70,10 @@
 
                 this.$nextTick(() => {
                     this.adjustPosition(caller);
+
+                    this.$nextTick(() => {
+                        this.adjustHeight(caller);
+                    });
                 });
             },
 
@@ -97,6 +111,7 @@
 
             close() {
                 this.show = false;
+                this.height = "auto";
             },
 
             abstractClose() {
@@ -195,6 +210,16 @@
 
                 this.style.left += "px";
                 this.style.top += "px";
+            },
+
+            adjustHeight(caller) {
+                let cmTop = this.$el.getBoundingClientRect().top;
+                let overlayHeight = this.overlay.$el.getBoundingClientRect().height;
+
+                if (cmTop < 0) {
+                    this.style.top = 10 + "px";
+                    this.height = overlayHeight - 10 * 2 + "px";
+                }
             }
         }
     }
@@ -202,7 +227,13 @@
 
 <style>
     .cm {
+        box-sizing: border-box;
         position: absolute;
         display: block;
+    }
+
+    .cm > div {
+        height: 100%;
+        overflow: auto;
     }
 </style>

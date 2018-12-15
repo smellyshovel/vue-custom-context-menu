@@ -54,8 +54,6 @@
 
         methods: {
             open(event, caller) {
-                console.log("Opening #" + this.$el.id + "...");
-
                 this.show = true;
 
                 this.setPosition(event, caller);
@@ -73,8 +71,6 @@
                     }
 
                     this.open(event, caller);
-                    this.calledBy = caller;
-
                     this.openTimer = null;
                 }
             },
@@ -100,8 +96,6 @@
             },
 
             close() {
-                console.log("CLOSING #" + this.$el.id + "...");
-
                 this.show = false;
             },
 
@@ -177,10 +171,10 @@
 
                 if (furthestX >= viewportWidth) {
                     if (this.normalizedOptions.transfer === "x" || this.normalizedOptions.transfer === "both") {
-                        if (!caller) {
-                            this.style.left = parseFloat(this.style.left) - cmWidth;
-                        } else {
+                        if (caller) {
                             this.style.left = caller.getBoundingClientRect().left - cmWidth;
+                        } else {
+                            this.style.left = parseFloat(this.style.left) - cmWidth;
                         }
                     } else {
                         this.style.left = viewportWidth - cmWidth;
@@ -189,10 +183,10 @@
 
                 if (furthestY >= viewportHeight) {
                     if (this.normalizedOptions.transfer === "y" || this.normalizedOptions.transfer === "both") {
-                        if (!caller) {
-                            this.style.top = parseFloat(this.style.top) - cmHeight;
-                        } else {
+                        if (caller) {
                             this.style.top = caller.getBoundingClientRect().bottom - cmHeight;
+                        } else {
+                            this.style.top = parseFloat(this.style.top) - cmHeight;
                         }
                     } else {
                         this.style.top = viewportHeight - cmHeight;
@@ -210,15 +204,5 @@
     .cm {
         position: absolute;
         display: block;
-        padding: 1rem;
-        background-color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 1px 5px rgb(60, 60, 60);
-    }
-
-    .cm > ol {
-        margin: 0;
-        padding: 0;
-        list-style: none;
     }
 </style>

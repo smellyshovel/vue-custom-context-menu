@@ -23,27 +23,27 @@
         mounted() {
             if (this.penetrable) {
                 this.$nextTick(() => {
-                    this.$el.addEventListener("mousedown", this.$data._listeners.closePenetrable);
+                    this.$el.addEventListener("mousedown", this.listeners.closePenetrable);
                 });
             } else {
                 this.$nextTick(() => {
-                    this.$el.addEventListener("mousedown", this.$data._listeners.closeImpenetrable);
+                    this.$el.addEventListener("mousedown", this.listeners.closeImpenetrable);
                 });
             }
         },
 
         unmounted() {
             if (this.penetrable) {
-                this.$el.removeEventListener("mousedown", this.$data._listeners.closePenetrable);
+                this.$el.removeEventListener("mousedown", this.listeners.closePenetrable);
             } else {
-                this.$el.removeEventListener("mousedown", this.$data._listeners.closeImpenetrable);
+                this.$el.removeEventListener("mousedown", this.listeners.closeImpenetrable);
             }
         },
 
         data() {return {
             show: false,
 
-            _listeners: {
+            listeners: {
                 closePenetrable: (event) => {
                     this.$el.style.display = "none";
                     this.close();
@@ -51,6 +51,12 @@
 
                 closeImpenetrable: (event) => {
                     this.close();
+                },
+
+                closeOnEscKey: (event) => {
+                    if (event.keyCode === 27) {
+                        this.close();
+                    }
                 }
             }
         }},
@@ -59,6 +65,8 @@
             open() {
                 this.show = true;
                 document.documentElement.style.overflow = "hidden";
+                
+                document.addEventListener("keydown", this.listeners.closeOnEscKey);
             },
 
             close(event) {
@@ -68,6 +76,8 @@
                 this.$children.forEach((child) => {
                     child.immediateClose();
                 });
+
+                document.removeEventListener("keydown", this.listeners.closeOnEscKey);
             }
         }
     }

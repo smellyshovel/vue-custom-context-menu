@@ -1,27 +1,27 @@
 {
- "name": "vue-custom-context-menu",
- "version": "1.0.0",
- "description": "🖱 A Vue.js Plugin that allows you to build Context Menus for your app fast 🚀 and simple 🧩",
- "main": "src/main.js",
- "repository": {
-   "type": "git",
-   "url": "git+https://github.com/smellyshovel/vue-custom-context-menu.git"
- },
- "keywords": [
-   "vue",
-   "UI",
-   "context",
-   "menu",
-   "right",
-   "click"
- ],
- "author": "Matthew Mamonov <g.smellyshovel@gmail.com>",
- "license": "MIT",
- "bugs": {
-   "url": "https://github.com/smellyshovel/vue-custom-context-menu/issues"
- },
- "homepage": "https://github.com/smellyshovel/vue-custom-context-menu#readme",
- "dependencies": {
-   "vue": "^2.5.0"
- }
+  "name": "vue-custom-context-menu",
+  "version": "1.0.1",
+  "description": "🖱 A Vue.js Plugin that allows you to build Context Menus for your app fast 🚀 and simple 🧩",
+  "main": "src/main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smellyshovel/vue-custom-context-menu.git"
+  },
+  "keywords": [
+    "vue",
+    "UI",
+    "context",
+    "menu",
+    "right",
+    "click"
+  ],
+  "author": "Matthew Mamonov <g.smellyshovel@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/smellyshovel/vue-custom-context-menu/issues"
+  },
+  "homepage": "https://github.com/smellyshovel/vue-custom-context-menu#readme",
+  "dependencies": {
+    "vue": "^2.5.0"
+  }
 }

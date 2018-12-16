@@ -71,7 +71,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     #cm-overlay {
         position: fixed;
         top: 0;

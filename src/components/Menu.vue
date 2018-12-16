@@ -221,7 +221,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .cm {
         box-sizing: border-box;
         position: absolute;

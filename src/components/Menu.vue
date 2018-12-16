@@ -56,8 +56,8 @@
 
             normalizedOptions() {
                 return Object.assign({
-                    transfer: "both",
-                    delay: 500
+                    transfer: false,
+                    delay: 250
                 }, this.options);
             }
         },

@@ -1,6 +1,7 @@
 <template>
     <li
         class="cm-item"
+        :class="{'cm-item-caller': isCaller}"
 
         @mouseenter="itemSelected"
         @mouseleave="selectionAborted"
@@ -23,13 +24,17 @@
         computed: {
             cm() {
                 return this.$parent;
+            },
+
+            isCaller() {
+                return !!this.calls;
             }
         },
 
         methods: {
             itemSelected(event) {
                 // if the cursor enters a caller item
-                if (this.calls) {
+                if (this.isCaller) {
                     // if the target sub is already opened
                     if (this.cm.sub === this.calls) {
                         // cancel its closing
@@ -59,7 +64,7 @@
 
             selectionAborted(event) {
                 // only track "mouseleave" for callers
-                if (this.calls) {
+                if (this.isCaller) {
                     // cancel target's delayed opening
                     this.calls.cancelDelayedOpen();
                 }
@@ -67,7 +72,7 @@
 
             itemTriggered(event) {
                 // if a caller item is pressed
-                if (this.calls) {
+                if (this.isCaller) {
                     // if there's an already opened sub (or no such at all)
                     if (this.cm.sub !== this.calls) {
                         // if there's an opened sub already
@@ -93,11 +98,3 @@
         }
     }
 </script>
-
-<style>
-    .cm-item {
-        padding: 1rem;
-        background-color: rgb(241, 241, 241);
-        border-radius: 5px;
-    }
-</style>

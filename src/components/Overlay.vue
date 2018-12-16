@@ -43,7 +43,17 @@
             listeners: {
                 closeOnEscKey: (event) => {
                     if (event.keyCode === 27) {
-                        this.close();
+                        let nestedMost = this.$children.find((child) => {
+                            return child.sub === null;
+                        });
+
+                        let hadParent = nestedMost.parent;
+
+                        nestedMost.immediateClose();
+
+                        if (!hadParent) {
+                            this.close();
+                        }
                     }
                 }
             }

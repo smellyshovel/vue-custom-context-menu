@@ -49,8 +49,10 @@
                 } else {
                     // and if there's an opened sub
                     if (this.cm.sub) {
-                        // then just delay its closing
-                        this.cm.sub.delayedClose();
+                        // then just delay its closing if it hadn't been initiated previously already
+                        if (!this.cm.sub.closeTimer) {
+                            this.cm.sub.delayedClose();
+                        }
                     }
                 }
             },

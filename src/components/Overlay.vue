@@ -52,7 +52,7 @@
                         nestedMost.immediateClose();
 
                         if (!hadParent) {
-                            this.close();
+                            this.close(true);
                         }
                     }
                 }
@@ -67,12 +67,14 @@
                 document.addEventListener("keydown", this.listeners.closeOnEscKey);
             },
 
-            close(event) {
+            close(skipChildren) {
                 this.show = false;
 
-                this.$children.forEach((child) => {
-                    child.immediateClose();
-                });
+                if (!skipChildren) {
+                    this.$children.forEach((child) => {
+                        child.immediateClose();
+                    });
+                }
 
                 document.documentElement.style.overflow = "";
                 document.removeEventListener("keydown", this.listeners.closeOnEscKey);

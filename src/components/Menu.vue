@@ -69,11 +69,7 @@
                 this.setPosition(event, caller);
 
                 this.$nextTick(() => {
-                    this.adjustPosition(caller);
-
-                    this.$nextTick(() => {
-                        this.adjustHeight(caller);
-                    });
+                    this.transfer(caller);
                 });
             },
 
@@ -174,7 +170,7 @@
                 this.style.top += "px";
             },
 
-            adjustPosition(caller) {
+            transfer(caller) {
                 let viewportWidth = this.overlay.$el.getBoundingClientRect().width;
                 let viewportHeight = this.overlay.$el.getBoundingClientRect().height;
 
@@ -210,16 +206,16 @@
 
                 this.style.left += "px";
                 this.style.top += "px";
-            },
 
-            adjustHeight(caller) {
-                let cmTop = this.$el.getBoundingClientRect().top;
-                let overlayHeight = this.overlay.$el.getBoundingClientRect().height;
+                this.$nextTick(() => {
+                    if (parseFloat(this.style.top) < 0) {
+                        this.style.top = "0px";
 
-                if (cmTop < 0) {
-                    this.style.top = 10 + "px";
-                    this.height = overlayHeight - 10 * 2 + "px";
-                }
+                        if (cmHeight > viewportHeight) {
+                            this.height = viewportHeight + "px";
+                        }
+                    }
+                });
             }
         }
     }

@@ -1,8 +1,8 @@
 export default {
     bind: function(el, binding, vNode) {
         let findOverlayAndCm = () => {
-            if ("cm-stack" in vNode.context.$refs) {
-                var overlay = vNode.context.$refs["cm-stack"].$children.find((child) => {
+            if ("context-menus" in vNode.context.$refs) {
+                var overlay = vNode.context.$refs["context-menus"].$children.find((child) => {
                     return child.$options._componentTag === "cm-overlay";
                 });
             } else {

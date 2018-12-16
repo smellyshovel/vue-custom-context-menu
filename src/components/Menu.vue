@@ -138,7 +138,7 @@
 
                 this.closeTimer = setTimeout(() => {
                     this.abstractClose();
-                }, parent.normalizedOptions.delay);
+                }, this.parent.normalizedOptions.delay);
             },
 
             cancelDelayedClose() {

@@ -5,10 +5,12 @@ import ItemComponent from "./components/Item.vue";
 
 export default {
     install(Vue) {
+        // allow adding `v-context-menu="'#cm-ID'"` to any element
         Vue.directive("contextMenu", ContextMenuDirective);
 
-        Vue.component("cm-overlay", OverlayComponent);
-        Vue.component("contextMenu", MenuComponent);
-        Vue.component("cmItem", ItemComponent);
+        // declare globally available components
+        Vue.component("cmOverlay", OverlayComponent); // <cm-overlay>
+        Vue.component("contextMenu", MenuComponent); // <context-menu>
+        Vue.component("cmItem", ItemComponent); // <cm-item>
     }
 }

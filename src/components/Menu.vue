@@ -226,6 +226,7 @@
         box-sizing: border-box;
         position: absolute;
         display: block;
+        min-width: 200px;
     }
 
     .cm > div {

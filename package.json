@@ -2,7 +2,15 @@
   "name": "vue-custom-context-menu",
   "version": "1.0.2",
   "description": "🖱 A Vue.js Plugin that allows you to build Context Menus for your app fast 🚀 and simple 🧩",
-  "main": "src/main.js",
+  "main": "dist/vue-custom-context-menu.umd.js",
+  "module": "dist/vue-custom-context-menu.esm.js",
+  "unpkg": "dist/vue-custom-context-menu.cjs.js",
+  "scripts": {
+    "build": "npm run build:umd && npm run build:esm && npm run build:unpkg",
+    "build:umd": "rollup --config rollup.config.js --format umd --file dist/vue-custom-context-menu.umd.js",
+    "build:esm": "rollup --config rollup.config.js --format es --file dist/vue-custom-context-menu.esm.js",
+    "build:unpkg": "rollup --config rollup.config.js --format iife --file dist/vue-custom-context-menu.cjs.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/smellyshovel/vue-custom-context-menu.git"
@@ -21,7 +29,15 @@
     "url": "https://github.com/smellyshovel/vue-custom-context-menu/issues"
   },
   "homepage": "https://github.com/smellyshovel/vue-custom-context-menu#readme",
-  "dependencies": {
+  "peerDependencies": {
     "vue": "^2.5.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.0",
+    "rollup": "^0.68.0",
+    "rollup-plugin-babel": "^4.1.0",
+    "rollup-plugin-vue": "^4.3.2",
+    "vue-template-compiler": "^2.5.21"
   }
 }

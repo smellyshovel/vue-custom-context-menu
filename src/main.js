@@ -3,7 +3,7 @@ import OverlayComponent from "./components/Overlay.vue";
 import MenuComponent from "./components/Menu.vue";
 import ItemComponent from "./components/Item.vue";
 
-export default {
+const Plugin = {
     install(Vue) {
         // allow adding `v-context-menu="'#cm-ID'"` to any element
         Vue.directive("contextMenu", ContextMenuDirective);
@@ -13,4 +13,17 @@ export default {
         Vue.component("contextMenu", MenuComponent); // <context-menu>
         Vue.component("cmItem", ItemComponent); // <cm-item>
     }
+};
+
+// Auto-install when Vue is found (eg. in browser via <script> tag)
+if (typeof window !== 'undefined') {
+	var GlobalVue = window.Vue;
+} else if (typeof global !== 'undefined') {
+	var GlobalVue = global.Vue;
 }
+
+if (GlobalVue) {
+	GlobalVue.use(Plugin);
+}
+
+export default Plugin;

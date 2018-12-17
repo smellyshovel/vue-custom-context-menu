@@ -44,7 +44,7 @@
                 closeOnEscKey: (event) => {
                     if (event.keyCode === 27) {
                         let nestedMost = this.$children.find((child) => {
-                            return child.sub === null;
+                            return child.sub === null && child.show;
                         });
 
                         let hadParent = nestedMost.parent;

@@ -1,13 +1,13 @@
-export default {
+export default function(options) { return {
     bind: function(el, binding, vNode) {
         let findOverlayAndCm = () => {
-            if ("context-menus" in vNode.context.$refs) {
-                var overlay = vNode.context.$refs["context-menus"].$children.find((child) => {
-                    return child.$options._componentTag === "cm-overlay";
+            if (options.ref in vNode.context.$refs) {
+                var overlay = vNode.context.$refs[options.ref].$children.find((child) => {
+                    return child.$options._componentTag === options.overlay;
                 });
             } else {
                 var overlay = vNode.context.$children.find((child) => {
-                    return child.$options._componentTag === "cm-overlay";
+                    return child.$options._componentTag === options.overlay;
                 });
             }
 
@@ -18,7 +18,7 @@ export default {
             return {overlay, cm};
         };
 
-        if (vNode.componentInstance && vNode.componentOptions.tag === "cm-item") {
+        if (vNode.componentInstance && vNode.componentOptions.tag === options.item) {
             vNode.context.$nextTick(() => {
                 let {overlay, cm} = findOverlayAndCm();
                 vNode.componentInstance.calls = cm;
@@ -40,4 +40,4 @@ export default {
             });
         }
     }
-};
+}};

@@ -4,14 +4,22 @@ import MenuComponent from "./components/Menu.vue";
 import ItemComponent from "./components/Item.vue";
 
 const Plugin = {
-    install(Vue) {
+    install(Vue, options) {
+        options = Object.assign({
+            ref: "vccm-context-menus",
+            directive: "context-menu",
+            overlay: "vccm-overlay",
+            menu: "vccm-menu",
+            item: "vccm-item"
+        }, options);
+
         // allow adding `v-context-menu="'#cm-ID'"` to any element
-        Vue.directive("contextMenu", ContextMenuDirective);
+        Vue.directive(options.directive, ContextMenuDirective(options));
 
         // declare globally available components
-        Vue.component("cmOverlay", OverlayComponent); // <cm-overlay>
-        Vue.component("contextMenu", MenuComponent); // <context-menu>
-        Vue.component("cmItem", ItemComponent); // <cm-item>
+        Vue.component(options.overlay, OverlayComponent); // <cm-overlay>
+        Vue.component(options.menu, MenuComponent); // <context-menu>
+        Vue.component(options.item, ItemComponent); // <cm-item>
     }
 };
 

@@ -4,55 +4,57 @@
     global.VCCM = factory();
 }(typeof self !== 'undefined' ? self : this, function () { 'use strict';
 
-    var ContextMenuDirective = {
-      bind: function bind(el, binding, vNode) {
-        var findOverlayAndCm = function findOverlayAndCm() {
-          if ("context-menus" in vNode.context.$refs) {
-            var overlay = vNode.context.$refs["context-menus"].$children.find(function (child) {
-              return child.$options._componentTag === "cm-overlay";
+    function ContextMenuDirective (options) {
+      return {
+        bind: function bind(el, binding, vNode) {
+          var findOverlayAndCm = function findOverlayAndCm() {
+            if (options.ref in vNode.context.$refs) {
+              var overlay = vNode.context.$refs[options.ref].$children.find(function (child) {
+                return child.$options._componentTag === options.overlay;
+              });
+            } else {
+              var overlay = vNode.context.$children.find(function (child) {
+                return child.$options._componentTag === options.overlay;
+              });
+            }
+
+            var cm = overlay.$children.find(function (child) {
+              return child.$el === document.querySelector(binding.value);
+            });
+            return {
+              overlay: overlay,
+              cm: cm
+            };
+          };
+
+          if (vNode.componentInstance && vNode.componentOptions.tag === options.item) {
+            vNode.context.$nextTick(function () {
+              var _findOverlayAndCm = findOverlayAndCm(),
+                  cm = _findOverlayAndCm.cm;
+
+              vNode.componentInstance.calls = cm;
             });
           } else {
-            var overlay = vNode.context.$children.find(function (child) {
-              return child.$options._componentTag === "cm-overlay";
+            el.addEventListener("contextmenu", function (event) {
+              event.stopPropagation();
+
+              if (!binding.modifiers["no-native"] ? event.altKey === false : true) {
+                event.preventDefault();
+
+                if (!binding.modifiers["disabled"]) {
+                  var _findOverlayAndCm2 = findOverlayAndCm(),
+                      overlay = _findOverlayAndCm2.overlay,
+                      cm = _findOverlayAndCm2.cm;
+
+                  overlay.open();
+                  cm.immediateOpen(event);
+                }
+              }
             });
           }
-
-          var cm = overlay.$children.find(function (child) {
-            return child.$el === document.querySelector(binding.value);
-          });
-          return {
-            overlay: overlay,
-            cm: cm
-          };
-        };
-
-        if (vNode.componentInstance && vNode.componentOptions.tag === "cm-item") {
-          vNode.context.$nextTick(function () {
-            var _findOverlayAndCm = findOverlayAndCm(),
-                cm = _findOverlayAndCm.cm;
-
-            vNode.componentInstance.calls = cm;
-          });
-        } else {
-          el.addEventListener("contextmenu", function (event) {
-            event.stopPropagation();
-
-            if (!binding.modifiers["no-native"] ? event.altKey === false : true) {
-              event.preventDefault();
-
-              if (!binding.modifiers["disabled"]) {
-                var _findOverlayAndCm2 = findOverlayAndCm(),
-                    overlay = _findOverlayAndCm2.overlay,
-                    cm = _findOverlayAndCm2.cm;
-
-                overlay.open();
-                cm.immediateOpen(event);
-              }
-            }
-          });
         }
-      }
-    };
+      };
+    }
 
     //
     //
@@ -842,15 +844,22 @@
       );
 
     var Plugin = {
-      install: function install(Vue) {
-        // allow adding `v-context-menu="'#cm-ID'"` to any element
-        Vue.directive("contextMenu", ContextMenuDirective); // declare globally available components
+      install: function install(Vue, options) {
+        options = Object.assign({
+          ref: "vccm-context-menus",
+          directive: "context-menu",
+          overlay: "vccm-overlay",
+          menu: "vccm-menu",
+          item: "vccm-item"
+        }, options); // allow adding `v-context-menu="'#cm-ID'"` to any element
 
-        Vue.component("cmOverlay", OverlayComponent); // <cm-overlay>
+        Vue.directive(options.directive, ContextMenuDirective(options)); // declare globally available components
 
-        Vue.component("contextMenu", MenuComponent); // <context-menu>
+        Vue.component(options.overlay, OverlayComponent); // <cm-overlay>
 
-        Vue.component("cmItem", ItemComponent); // <cm-item>
+        Vue.component(options.menu, MenuComponent); // <context-menu>
+
+        Vue.component(options.item, ItemComponent); // <cm-item>
       }
     }; // Auto-install when Vue is found (eg. in browser via <script> tag)
 

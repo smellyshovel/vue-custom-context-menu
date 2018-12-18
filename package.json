@@ -5,9 +5,6 @@
   "main": "dist/vue-custom-context-menu.umd.js",
   "module": "dist/vue-custom-context-menu.esm.js",
   "unpkg": "dist/vue-custom-context-menu.min.js",
-  "browser": {
-    "./devel": "./src/main.js"
-  },
   "scripts": {
     "build": "npm run build:umd && npm run build:esm && npm run build:unpkg",
     "build:umd": "rollup --config rollup.config.js --format umd --file dist/vue-custom-context-menu.umd.js",

@@ -1,5 +1,7 @@
 # Vue Custom Context Menu
 
+**[ Note that Vue Custom Context Menu is in BETA till v2 which means that public API is _unstable_ and may change at any time without any warnings! _The release of v2 is expected no later than 01/01/2019_ ]**
+
 Check out the [Demo (TODO)](#)!
 
 What makes it special 🌟:

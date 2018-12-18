@@ -4,14 +4,17 @@
   "description": "🖱 A Vue.js Plugin that allows you to build Context Menus for your app fast 🚀 and simple 🧩",
   "main": "dist/vue-custom-context-menu.umd.js",
   "module": "dist/vue-custom-context-menu.esm.js",
-  "unpkg": "dist/vue-custom-context-menu.umd.js",
+  "unpkg": "dist/vue-custom-context-menu.min.js",
   "browser": {
     "./devel": "./src/main.js"
   },
   "scripts": {
-    "build": "npm run build:umd && npm run build:esm",
+    "build": "npm run build:umd && npm run build:esm && npm run build:unpkg",
     "build:umd": "rollup --config rollup.config.js --format umd --file dist/vue-custom-context-menu.umd.js",
-    "build:esm": "rollup --config rollup.config.js --format es --file dist/vue-custom-context-menu.esm.js"
+    "build:esm": "rollup --config rollup.config.js --format es --file dist/vue-custom-context-menu.esm.js",
+    "build:unpkg": "rollup --config rollup.config.js --format umd --file dist/vue-custom-context-menu.min.js --environment MINIFY",
+    "watch:umd": "rollup --watch --config rollup.config.js --format umd --file dist/vue-custom-context-menu.umd.js",
+    "watch:esm": "rollup --watch --config rollup.config.js --format es --file dist/vue-custom-context-menu.esm.js"
   },
   "repository": {
     "type": "git",
@@ -39,6 +42,7 @@
     "@babel/preset-env": "^7.2.0",
     "rollup": "^0.68.0",
     "rollup-plugin-babel": "^4.1.0",
+    "rollup-plugin-babel-minify": "^6.2.0",
     "rollup-plugin-vue": "^4.3.2",
     "vue-template-compiler": "^2.5.21"
   }

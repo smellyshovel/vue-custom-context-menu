@@ -17,6 +17,7 @@ What makes it special 🌟:
 
 And even a few more:
 * 📱 Works well either on **desktops** and on **mobile** devices
+* Don't like how components/directives and other related things are named by default? Change it! [ edit ]
 * Everything is made for your (and your users') convenience: no more manual events registration, no more struggling with edge-cases - you can **just use it** 🛎
 
 Sounds as a charm for you? Then dig further!
@@ -68,6 +69,8 @@ Sure thing in order to experience all the above stated benefits yourself you fir
     <!-- And the plugin itself... -->
     <script src="unpkg.com/vue-custom-context-menu"></script>
     ```
+    **[ Note that _unpkg.com_ currently experiences some troubles so the link above may point to a wrong file ]**
+    
     **Note** that using this approach you *don't have to manually install the plugin* via `Vue.use()`. As always everything's already set up for you
 
 Cool, now yor're ready to build your Custom Context Menus! Consider the next section to find out how

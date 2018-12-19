@@ -849,8 +849,8 @@
           ref: "vccm-context-menus",
           directive: "context-menu",
           overlay: "vccm-overlay",
-          menu: "vccm-menu",
-          item: "vccm-item"
+          menu: "context-menu",
+          item: "cm-item"
         }, options); // allow adding `v-context-menu="'#cm-ID'"` to any element
 
         Vue.directive(options.directive, ContextMenuDirective(options)); // declare globally available components

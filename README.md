@@ -63,38 +63,38 @@ The first one is for use in full-fledged web applications. Using **npm**/**webpa
 
 1. Just **install** the `vue-custom-context-menu` npm package:
 
-  ```shell
-  $ npm install vue-custom-context-menu --save
-  ```
+    ```shell
+    $ npm install vue-custom-context-menu --save
+    ```
 
 1. Then in your main file **import** the plugin:
-  ```javascript
-  import VCCM from "vue-custom-context-menu"
-  ```
-  or
-  ```javascript
-  require("vue-custom-context-menu")
-  ```
-  *The both options would work out precisely the same end result. Decide what to choose depending on what build system you use*
+    ```javascript
+    import VCCM from "vue-custom-context-menu"
+    ```
+    or
+    ```javascript
+    require("vue-custom-context-menu")
+    ```
+    *The both options would work out precisely the same end result. Decide what to choose depending on what build system you use*
 
 1. And the last thing is to make Vue **use** the plugin. In order to achieve that add `Vue.use(VCCM)` before the definition of your app's main instance. Your end main file should look something like the follows
 
-  ```javascript
-  // import the Vue itself
-  import Vue from 'vue'
-  // import the main component
-  import App from './App.vue'
-  // import the king of the party
-  import VCCM from 'vue-custom-context-menu'
+    ```javascript
+    // import the Vue itself
+    import Vue from 'vue'
+    // import the main component
+    import App from './App.vue'
+    // import the king of the party
+    import VCCM from 'vue-custom-context-menu'
 
-  // install the plugin
-  Vue.use(VCCM);
+    // install the plugin
+    Vue.use(VCCM);
 
-  // and then define the main instance
-  new Vue({
+    // and then define the main instance
+    new Vue({
     render: h => h(App),
-  }).$mount('#app')
-  ```
+    }).$mount('#app')
+    ```
 
 _**Note** that in order to get the Vue Custom Context Menu working the Vue must be of version `^2.5.0` (temporarily though, the exact minimum-required version will be figured out soon)_
 

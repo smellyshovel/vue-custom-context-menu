@@ -28,6 +28,7 @@ Use the links below if you know exactly what are you looking for. Otherwise it w
     1. [Opening a Context Menu](#opening-a-context-menu)
         * [The `v-context-menu` directive's modifiers](#the-v-context-menu-directives-modifiers)
         * [Opening a Context Menu as a nested one](#opening-a-context-menu-as-a-nested-one)
+1. [QnA](#qna)
 1. [Contribution](#contribution)
 
 ## [A brief](#a-brief)
@@ -56,7 +57,7 @@ Sounds as a charm for you? Then dig further!
 
 Sure thing in order to experience all the above stated benefits yourself you first have to install the plugin. There're 2 **possible ways** to do so:
 
-### 1. [Using build systems](#using-build-systems)
+### [Using build systems](#using-build-systems)
 
 The first one is for use in full-fledged web applications. Using **npm**/**webpack**/**rollup**/**babel** in your project? Then probably this one is for you!
 
@@ -97,7 +98,7 @@ The first one is for use in full-fledged web applications. Using **npm**/**webpa
 
 _**Note** that in order to get the Vue Custom Context Menu working the Vue must be of version `^2.5.0` (temporarily though, the exact minimum-required version will be figured out soon)_
 
-### 2. [Via the `<script>` tag](#via-the-script-tag)
+### [Via the `<script>` tag](#via-the-script-tag)
 
 The second approach is suitable when you don't use any build system and want to simply link the plugin to a page in the form of a seperate **script**. Here you go then
 

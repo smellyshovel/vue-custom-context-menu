@@ -82,6 +82,8 @@
 
                     this.open(event, caller);
                     this.openTimer = null;
+
+                    this.$emit("opened", event, this);
                 }
             },
 
@@ -124,6 +126,8 @@
 
                     this.close();
                     this.closeTimer = null;
+
+                    this.$emit("closed", this);
                 }
             },
 

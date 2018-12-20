@@ -124,6 +124,50 @@ This 2nd example represents the second case described above: some component (wit
 
 The both options above are essentially the same. Decide which one to choose based on your preferences. The 2nd one however is probably to be chose **more frequently** because it allows you to keep you main component clean by carrying all the Context Menus out into a separate file.
 
+#### Overlay props
+
+There're currently 2 parameters available to be passed to the overlay instance:
+* `transition` - *`""` (empty string) by default* - used to provide the name of a  transition to be applied to a Context Menu
+* `penetrable` - *`false` by default* - a boolean, specifying whether the overlay is penetrable or not
+
+##### `transition`
+**Expects**: *a __string__*  
+**Defaults to**: *`""` (an empty string)*
+
+```html
+<vccm-overlay transition="fade-out">
+    <!-- Here go the Context Menus -->
+</vccm-overlay>
+```
+
+Using the code from the example above allows you to achive the same behavior as when using
+
+```html
+<transition name="fade-out">
+    <vccm-overlay>
+        <!-- Here go the Context Menus -->
+    </vccm-overlay>
+</transition>
+```
+
+**Note** however that you *must not* apply transitions manually as in the example above because it would break everything and flood your console with multiple errors.
+
+*Find out how to use Vue transitions [here](https://vuejs.org/v2/guide/transitions.html).*
+
+##### `penetrable`
+
+The `penetrable` option allows you take control over what would happen if you right-click the overlay. There're 2 possible outcomes:
+* The overlay would just become closed and nothing else would happen
+* The overlay would become closed and another Context Menu (thus the overlay as well) would immediately become opened for the element that was under the cursor when the right-click happened (like if there were no overlay at all).
+
+It's not hard to guess that the first outcome is expected when the `penetrable` option is set to `false` and the second one - when it's set to `true`.
+
+```html
+<vccm-overlay :penetrable="true">
+    <!-- Here go the Context Menus -->
+</vccm-overlay>
+```
+
 ### Defining Context Menus
 
 The 2nd component provided by the plugin, `<context-menu>`, is used to define Context Menus themselfs. Each `<context-menu>` must be a child of the sole `<vccm-overlay>`
@@ -172,6 +216,37 @@ then neither the `cm-lambda` nor the `cm-omega` would be reachable.
 
 **Note** the `cm-` part of IDs. It's not necessary, though it's still a good practice to avoid global namespace pollution. In reality an ID might look whatever you like it to.
 
+#### Context Menu props
+
+There're currently 2 parameters available to be passed to a Context Menu instance:
+* `transition` - *`""` (empty string) by default* - used to provide the name of a  transition to be applied to a Context Menu
+* `options` - *`{transfer: "x", delay: 250}` by default* - an object with options for a specific Context Menu
+delay is only respected
+
+##### `transition`
+**Expects**: *a __string__*  
+**Defaults to**: *`""` (an empty string)*
+
+```html
+<context-menu transition="fade-out">
+    <!-- Here go the Context Menus -->
+</context-menu>
+```
+
+Using the code from the example above allows you to achive the same behavior as when using
+
+```html
+<transition name="fade-out">
+    <context-menu>
+        <!-- Here go the Context Menus -->
+    </context-menu>
+</transition>
+```
+
+**Note** however that you *must not* apply transitions manually as in the example above because it would break everything and flood your console with multiple errors.
+
+*Find out how to use Vue transitions [here](https://vuejs.org/v2/guide/transitions.html).*
+
 ### Defining Items
 
 The 3d component, `<cm-item>`, is to be used to describe the items of your Context Menus (what a surprise, huh?). Each `<cm-item>` must be a child of the `<context-menu>` that it is item of
@@ -191,6 +266,8 @@ The 3d component, `<cm-item>`, is to be used to describe the items of your Conte
 Everything's straightforward here. The `action` parameter specifies what action to perform when an item is selected. The item's `<slot>` (the space between opening and closing tags) states what it would be visible for user when he/she would open the `#cm-alfa` Context Menu.
 
 In the mean time an item is trated as "selected" only when it's clicked, though it's planned to add the keyboard support to be able to navigate through Context Menus via `[key down]`, `[key up]` and trigger actions via `[enter]` (for example).
+
+**Note** that the `action` is optional. Nothing bad would happen when such an item without the `action` is selected - all the Context Menus will just be closed.
 
 ### Opening a Context Menu
 
@@ -277,8 +354,20 @@ All you have to do in order to be able to open one Context Menu when pointing th
 
 **Note** that when a `<cm-item>` is provided with the `v-context-menu` directive then its `action` is ignored. And that's quite logical since if the directive is provided then it's clear that the main purpose of the item is to open some Context Menu. So it don't have to respond to anything else.
 
-just don't try to open a parental Context Menu from the child one.
-options.delay is only respected
+**Note** that items of child Context Menu must not be used to open this Context Menu's parental Context Menu. The next example shows this case
+
+```html
+<!-- Don't do so. Bad example -->
+<context-menu id="cm-alfa">
+    <cm-item v-context-menu="'#cm-lambda'">Open Lambda</cm-item>
+</context-menu>
+
+<context-menu id="cm-lambda">
+    <cm-item v-context-menu="'#cm-alfa'">Open Omega From Here</cm-item>
+</context-menu>
+```
+
+**Though the code is perfectly fine by itself and even throws no errors or warnings the behavior is still unpredictible at its most. Just try to avoid doing so.**
 
 ## Contribution
 

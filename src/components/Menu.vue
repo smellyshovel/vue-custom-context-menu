@@ -23,7 +23,20 @@
     export default {
         props: {
             transition: String,
-            options: Object
+            shift: {
+                type: [String],
+                default: "x",
+                validator(value) {
+                    return ["fit", "x", "y", "both"].includes(value);
+                }
+            },
+            delay: {
+                type: Number,
+                default: 250,
+                validator(value) {
+                    return value > 0;
+                }
+            }
         },
 
         data() {return {
@@ -52,13 +65,6 @@
         computed: {
             overlay() {
                 return this.$parent;
-            },
-
-            normalizedOptions() {
-                return Object.assign({
-                    transfer: false,
-                    delay: 250
-                }, this.options);
             }
         },
 
@@ -69,7 +75,7 @@
                 this.setPosition(event, caller);
 
                 this.$nextTick(() => {
-                    this.transfer(caller);
+                    this.transpose(caller);
                 });
             },
 
@@ -97,7 +103,7 @@
 
                 this.openTimer = setTimeout(() => {
                     this.abstractOpen(event, caller, parent);
-                }, parent.normalizedOptions.delay);
+                }, parent.delay);
             },
 
             cancelDelayedOpen() {
@@ -142,7 +148,7 @@
 
                 this.closeTimer = setTimeout(() => {
                     this.abstractClose();
-                }, this.parent.normalizedOptions.delay);
+                }, this.parent.delay);
             },
 
             cancelDelayedClose() {
@@ -174,7 +180,7 @@
                 this.style.top += "px";
             },
 
-            transfer(caller) {
+            transpose(caller) {
                 let viewportWidth = this.overlay.$el.getBoundingClientRect().width;
                 let viewportHeight = this.overlay.$el.getBoundingClientRect().height;
 
@@ -185,7 +191,7 @@
                 let furthestY = this.$el.getBoundingClientRect().bottom;
 
                 if (furthestX >= viewportWidth) {
-                    if (this.normalizedOptions.transfer === "x" || this.normalizedOptions.transfer === "both") {
+                    if (this.shift === "x" || this.shift === "both") {
                         if (caller) {
                             this.style.left = caller.getBoundingClientRect().left - cmWidth;
                         } else {
@@ -197,7 +203,7 @@
                 }
 
                 if (furthestY >= viewportHeight) {
-                    if (this.normalizedOptions.transfer === "y" || this.normalizedOptions.transfer === "both") {
+                    if (this.shift === "y" || this.shift === "both") {
                         if (caller) {
                             this.style.top = caller.getBoundingClientRect().bottom - cmHeight;
                         } else {

@@ -329,7 +329,20 @@
     var script$1 = {
       props: {
         transition: String,
-        options: Object
+        shift: {
+          type: [String],
+          default: "x",
+          validator: function validator(value) {
+            return ["fit", "x", "y", "both"].includes(value);
+          }
+        },
+        delay: {
+          type: Number,
+          default: 250,
+          validator: function validator(value) {
+            return value > 0;
+          }
+        }
       },
       data: function data() {
         return {
@@ -353,12 +366,6 @@
       computed: {
         overlay: function overlay() {
           return this.$parent;
-        },
-        normalizedOptions: function normalizedOptions() {
-          return Object.assign({
-            transfer: false,
-            delay: 250
-          }, this.options);
         }
       },
       methods: {
@@ -368,7 +375,7 @@
           this.show = true;
           this.setPosition(event, caller);
           this.$nextTick(function () {
-            _this.transfer(caller);
+            _this.transpose(caller);
           });
         },
         abstractOpen: function abstractOpen(event, caller, parent) {
@@ -393,7 +400,7 @@
           this.cancelDelayedOpen();
           this.openTimer = setTimeout(function () {
             _this2.abstractOpen(event, caller, parent);
-          }, parent.normalizedOptions.delay);
+          }, parent.delay);
         },
         cancelDelayedOpen: function cancelDelayedOpen() {
           if (this.openTimer) {
@@ -433,7 +440,7 @@
           this.cancelDelayedClose();
           this.closeTimer = setTimeout(function () {
             _this3.abstractClose();
-          }, this.parent.normalizedOptions.delay);
+          }, this.parent.delay);
         },
         cancelDelayedClose: function cancelDelayedClose() {
           if (this.closeTimer) {
@@ -461,7 +468,7 @@
           this.style.left += "px";
           this.style.top += "px";
         },
-        transfer: function transfer(caller) {
+        transpose: function transpose(caller) {
           var _this4 = this;
 
           var viewportWidth = this.overlay.$el.getBoundingClientRect().width;
@@ -472,7 +479,7 @@
           var furthestY = this.$el.getBoundingClientRect().bottom;
 
           if (furthestX >= viewportWidth) {
-            if (this.normalizedOptions.transfer === "x" || this.normalizedOptions.transfer === "both") {
+            if (this.shift === "x" || this.shift === "both") {
               if (caller) {
                 this.style.left = caller.getBoundingClientRect().left - cmWidth;
               } else {
@@ -484,7 +491,7 @@
           }
 
           if (furthestY >= viewportHeight) {
-            if (this.normalizedOptions.transfer === "y" || this.normalizedOptions.transfer === "both") {
+            if (this.shift === "y" || this.shift === "both") {
               if (caller) {
                 this.style.top = caller.getBoundingClientRect().bottom - cmHeight;
               } else {
@@ -549,11 +556,11 @@
       /* style */
       const __vue_inject_styles__$1 = function (inject) {
         if (!inject) return
-        inject("data-v-6f84f736_0", { source: "\n.cm[data-v-6f84f736] {\n    box-sizing: border-box;\n    position: absolute;\n    display: block;\n    min-width: 200px;\n}\n.cm > div[data-v-6f84f736] {\n    height: 100%;\n    overflow: auto;\n}\n", map: {"version":3,"sources":["/home/matt/projects/vue-custom-context-menu/src/components/Menu.vue"],"names":[],"mappings":";AAoOA;IACA,uBAAA;IACA,mBAAA;IACA,eAAA;IACA,iBAAA;CACA;AAEA;IACA,aAAA;IACA,eAAA;CACA","file":"Menu.vue","sourcesContent":["<template>\n    <transition\n        :name=\"transition\"\n\n        ><div\n            class=\"cm\"\n            v-show=\"show\"\n            :style=\"style\"\n\n            @mouseenter=\"preventCollapsing\"\n            @mousedown.stop\n\n            ><div>\n                <ol>\n                    <slot></slot>\n                </ol>\n            </div>\n        </div>\n    </transition>\n</template>\n\n<script>\n    export default {\n        props: {\n            transition: String,\n            options: Object\n        },\n\n        data() {return {\n            show: false,\n\n            style: {\n                left: 0,\n                top: 0\n            },\n\n            height: 0,\n\n            parent: null,\n            sub: null,\n\n            openTimer: null,\n            closeTimer: null\n        }},\n\n        watch: {\n            height(newValue) {\n                this.$set(this.style, \"height\", newValue);\n            }\n        },\n\n        computed: {\n            overlay() {\n                return this.$parent;\n            },\n\n            normalizedOptions() {\n                return Object.assign({\n                    transfer: false,\n                    delay: 250\n                }, this.options);\n            }\n        },\n\n        methods: {\n            open(event, caller) {\n                this.show = true;\n\n                this.setPosition(event, caller);\n\n                this.$nextTick(() => {\n                    this.transfer(caller);\n                });\n            },\n\n            abstractOpen(event, caller, parent) {\n                if (!this.show) {\n                    if (parent) {\n                        this.parent = parent;\n                        this.parent.sub = this;\n                    }\n\n                    this.open(event, caller);\n                    this.openTimer = null;\n\n                    this.$emit(\"opened\", event, this);\n                }\n            },\n\n            immediateOpen(event, caller, parent) {\n                this.cancelDelayedOpen();\n                this.abstractOpen(event, caller, parent);\n            },\n\n            delayedOpen(event, caller, parent) {\n                this.cancelDelayedOpen();\n\n                this.openTimer = setTimeout(() => {\n                    this.abstractOpen(event, caller, parent);\n                }, parent.normalizedOptions.delay);\n            },\n\n            cancelDelayedOpen() {\n                if (this.openTimer) {\n                    clearTimeout(this.openTimer);\n                    this.openTimer = null;\n                }\n            },\n\n            close() {\n                this.show = false;\n                this.height = \"auto\";\n            },\n\n            abstractClose() {\n                if (this.show) {\n                    if (this.parent) {\n                        this.parent.sub = null;\n                        this.parent = null;\n                    }\n\n                    if (this.sub) {\n                        this.sub.immediateClose();\n                        this.sub = null;\n                    }\n\n                    this.close();\n                    this.closeTimer = null;\n\n                    this.$emit(\"closed\", this);\n                }\n            },\n\n            immediateClose() {\n                this.cancelDelayedClose();\n                this.abstractClose();\n            },\n\n            delayedClose() {\n                // in some rare cases this one is crucial\n                this.cancelDelayedClose();\n\n                this.closeTimer = setTimeout(() => {\n                    this.abstractClose();\n                }, this.parent.normalizedOptions.delay);\n            },\n\n            cancelDelayedClose() {\n                if (this.closeTimer) {\n                    clearTimeout(this.closeTimer);\n                    this.closeTimer = null;\n                }\n            },\n\n            preventCollapsing() {\n                let parent = this;\n\n                while (parent) {\n                    parent.cancelDelayedClose();\n                    parent = parent.parent;\n                }\n            },\n\n            setPosition(event, caller) {\n                if (caller) {\n                    this.style.left = caller.getBoundingClientRect().right;\n                    this.style.top = caller.getBoundingClientRect().top;\n                } else {\n                    this.style.left = event.clientX;\n                    this.style.top = event.clientY;\n                }\n\n                this.style.left += \"px\";\n                this.style.top += \"px\";\n            },\n\n            transfer(caller) {\n                let viewportWidth = this.overlay.$el.getBoundingClientRect().width;\n                let viewportHeight = this.overlay.$el.getBoundingClientRect().height;\n\n                let cmWidth = this.$el.getBoundingClientRect().width;\n                let cmHeight = this.$el.getBoundingClientRect().height;\n\n                let furthestX = this.$el.getBoundingClientRect().right;\n                let furthestY = this.$el.getBoundingClientRect().bottom;\n\n                if (furthestX >= viewportWidth) {\n                    if (this.normalizedOptions.transfer === \"x\" || this.normalizedOptions.transfer === \"both\") {\n                        if (caller) {\n                            this.style.left = caller.getBoundingClientRect().left - cmWidth;\n                        } else {\n                            this.style.left = parseFloat(this.style.left) - cmWidth;\n                        }\n                    } else {\n                        this.style.left = viewportWidth - cmWidth;\n                    }\n                }\n\n                if (furthestY >= viewportHeight) {\n                    if (this.normalizedOptions.transfer === \"y\" || this.normalizedOptions.transfer === \"both\") {\n                        if (caller) {\n                            this.style.top = caller.getBoundingClientRect().bottom - cmHeight;\n                        } else {\n                            this.style.top = parseFloat(this.style.top) - cmHeight;\n                        }\n                    } else {\n                        this.style.top = viewportHeight - cmHeight;\n                    }\n                }\n\n                this.style.left += \"px\";\n                this.style.top += \"px\";\n\n                this.$nextTick(() => {\n                    if (parseFloat(this.style.top) < 0) {\n                        this.style.top = \"0px\";\n\n                        if (cmHeight > viewportHeight) {\n                            this.height = viewportHeight + \"px\";\n                        }\n                    }\n                });\n            }\n        }\n    }\n</script>\n\n<style scoped>\n    .cm {\n        box-sizing: border-box;\n        position: absolute;\n        display: block;\n        min-width: 200px;\n    }\n\n    .cm > div {\n        height: 100%;\n        overflow: auto;\n    }\n</style>\n"]}, media: undefined });
+        inject("data-v-3e48e28c_0", { source: "\n.cm[data-v-3e48e28c] {\n    box-sizing: border-box;\n    position: absolute;\n    display: block;\n    min-width: 200px;\n}\n.cm > div[data-v-3e48e28c] {\n    height: 100%;\n    overflow: auto;\n}\n", map: {"version":3,"sources":["/home/matt/projects/vue-custom-context-menu/src/components/Menu.vue"],"names":[],"mappings":";AA0OA;IACA,uBAAA;IACA,mBAAA;IACA,eAAA;IACA,iBAAA;CACA;AAEA;IACA,aAAA;IACA,eAAA;CACA","file":"Menu.vue","sourcesContent":["<template>\n    <transition\n        :name=\"transition\"\n\n        ><div\n            class=\"cm\"\n            v-show=\"show\"\n            :style=\"style\"\n\n            @mouseenter=\"preventCollapsing\"\n            @mousedown.stop\n\n            ><div>\n                <ol>\n                    <slot></slot>\n                </ol>\n            </div>\n        </div>\n    </transition>\n</template>\n\n<script>\n    export default {\n        props: {\n            transition: String,\n            shift: {\n                type: [String],\n                default: \"x\",\n                validator(value) {\n                    return [\"fit\", \"x\", \"y\", \"both\"].includes(value);\n                }\n            },\n            delay: {\n                type: Number,\n                default: 250,\n                validator(value) {\n                    return value > 0;\n                }\n            }\n        },\n\n        data() {return {\n            show: false,\n\n            style: {\n                left: 0,\n                top: 0\n            },\n\n            height: 0,\n\n            parent: null,\n            sub: null,\n\n            openTimer: null,\n            closeTimer: null\n        }},\n\n        watch: {\n            height(newValue) {\n                this.$set(this.style, \"height\", newValue);\n            }\n        },\n\n        computed: {\n            overlay() {\n                return this.$parent;\n            }\n        },\n\n        methods: {\n            open(event, caller) {\n                this.show = true;\n\n                this.setPosition(event, caller);\n\n                this.$nextTick(() => {\n                    this.transpose(caller);\n                });\n            },\n\n            abstractOpen(event, caller, parent) {\n                if (!this.show) {\n                    if (parent) {\n                        this.parent = parent;\n                        this.parent.sub = this;\n                    }\n\n                    this.open(event, caller);\n                    this.openTimer = null;\n\n                    this.$emit(\"opened\", event, this);\n                }\n            },\n\n            immediateOpen(event, caller, parent) {\n                this.cancelDelayedOpen();\n                this.abstractOpen(event, caller, parent);\n            },\n\n            delayedOpen(event, caller, parent) {\n                this.cancelDelayedOpen();\n\n                this.openTimer = setTimeout(() => {\n                    this.abstractOpen(event, caller, parent);\n                }, parent.delay);\n            },\n\n            cancelDelayedOpen() {\n                if (this.openTimer) {\n                    clearTimeout(this.openTimer);\n                    this.openTimer = null;\n                }\n            },\n\n            close() {\n                this.show = false;\n                this.height = \"auto\";\n            },\n\n            abstractClose() {\n                if (this.show) {\n                    if (this.parent) {\n                        this.parent.sub = null;\n                        this.parent = null;\n                    }\n\n                    if (this.sub) {\n                        this.sub.immediateClose();\n                        this.sub = null;\n                    }\n\n                    this.close();\n                    this.closeTimer = null;\n\n                    this.$emit(\"closed\", this);\n                }\n            },\n\n            immediateClose() {\n                this.cancelDelayedClose();\n                this.abstractClose();\n            },\n\n            delayedClose() {\n                // in some rare cases this one is crucial\n                this.cancelDelayedClose();\n\n                this.closeTimer = setTimeout(() => {\n                    this.abstractClose();\n                }, this.parent.delay);\n            },\n\n            cancelDelayedClose() {\n                if (this.closeTimer) {\n                    clearTimeout(this.closeTimer);\n                    this.closeTimer = null;\n                }\n            },\n\n            preventCollapsing() {\n                let parent = this;\n\n                while (parent) {\n                    parent.cancelDelayedClose();\n                    parent = parent.parent;\n                }\n            },\n\n            setPosition(event, caller) {\n                if (caller) {\n                    this.style.left = caller.getBoundingClientRect().right;\n                    this.style.top = caller.getBoundingClientRect().top;\n                } else {\n                    this.style.left = event.clientX;\n                    this.style.top = event.clientY;\n                }\n\n                this.style.left += \"px\";\n                this.style.top += \"px\";\n            },\n\n            transpose(caller) {\n                let viewportWidth = this.overlay.$el.getBoundingClientRect().width;\n                let viewportHeight = this.overlay.$el.getBoundingClientRect().height;\n\n                let cmWidth = this.$el.getBoundingClientRect().width;\n                let cmHeight = this.$el.getBoundingClientRect().height;\n\n                let furthestX = this.$el.getBoundingClientRect().right;\n                let furthestY = this.$el.getBoundingClientRect().bottom;\n\n                if (furthestX >= viewportWidth) {\n                    if (this.shift === \"x\" || this.shift === \"both\") {\n                        if (caller) {\n                            this.style.left = caller.getBoundingClientRect().left - cmWidth;\n                        } else {\n                            this.style.left = parseFloat(this.style.left) - cmWidth;\n                        }\n                    } else {\n                        this.style.left = viewportWidth - cmWidth;\n                    }\n                }\n\n                if (furthestY >= viewportHeight) {\n                    if (this.shift === \"y\" || this.shift === \"both\") {\n                        if (caller) {\n                            this.style.top = caller.getBoundingClientRect().bottom - cmHeight;\n                        } else {\n                            this.style.top = parseFloat(this.style.top) - cmHeight;\n                        }\n                    } else {\n                        this.style.top = viewportHeight - cmHeight;\n                    }\n                }\n\n                this.style.left += \"px\";\n                this.style.top += \"px\";\n\n                this.$nextTick(() => {\n                    if (parseFloat(this.style.top) < 0) {\n                        this.style.top = \"0px\";\n\n                        if (cmHeight > viewportHeight) {\n                            this.height = viewportHeight + \"px\";\n                        }\n                    }\n                });\n            }\n        }\n    }\n</script>\n\n<style scoped>\n    .cm {\n        box-sizing: border-box;\n        position: absolute;\n        display: block;\n        min-width: 200px;\n    }\n\n    .cm > div {\n        height: 100%;\n        overflow: auto;\n    }\n</style>\n"]}, media: undefined });
 
       };
       /* scoped */
-      const __vue_scope_id__$1 = "data-v-6f84f736";
+      const __vue_scope_id__$1 = "data-v-3e48e28c";
       /* module identifier */
       const __vue_module_identifier__$1 = undefined;
       /* functional template */

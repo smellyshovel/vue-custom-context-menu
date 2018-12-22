@@ -709,7 +709,8 @@ __vue_render__$1._withStripped = true;
 //
 var script$2 = {
   props: {
-    action: Function
+    action: Function,
+    disabled: Boolean
   },
   data: function data() {
     return {
@@ -777,7 +778,7 @@ var script$2 = {
 
       } else {
         // perform the item's action (if any)
-        if (this.action) {
+        if (!this.disabled && this.action) {
           this.action(this.cm.target, this.cm);
         } // and close everything
 
@@ -800,7 +801,7 @@ var __vue_render__$2 = function() {
     "li",
     {
       staticClass: "cm-item",
-      class: { "cm-item-caller": _vm.isCaller },
+      class: { "cm-item-caller": _vm.isCaller, disabled: _vm.disabled },
       on: {
         mouseenter: _vm.itemSelected,
         mouseleave: _vm.selectionAborted,

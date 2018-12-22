@@ -1,7 +1,7 @@
 <template>
     <li
         class="cm-item"
-        :class="{'cm-item-caller': isCaller}"
+        :class="{'cm-item-caller': isCaller, disabled}"
 
         @mouseenter="itemSelected"
         @mouseleave="selectionAborted"
@@ -14,7 +14,8 @@
 <script>
     export default {
         props: {
-            action: Function
+            action: Function,
+            disabled: Boolean
         },
 
         data() {return {
@@ -87,7 +88,7 @@
                 // if a not-a-caller item is pressed
                 } else {
                     // perform the item's action (if any)
-                    if (this.action) {
+                    if (!this.disabled && this.action) {
                         this.action(this.cm.target, this.cm);
                     }
 

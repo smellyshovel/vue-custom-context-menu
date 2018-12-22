@@ -715,7 +715,8 @@
     //
     var script$2 = {
       props: {
-        action: Function
+        action: Function,
+        disabled: Boolean
       },
       data: function data() {
         return {
@@ -783,7 +784,7 @@
 
           } else {
             // perform the item's action (if any)
-            if (this.action) {
+            if (!this.disabled && this.action) {
               this.action(this.cm.target, this.cm);
             } // and close everything
 
@@ -806,7 +807,7 @@
         "li",
         {
           staticClass: "cm-item",
-          class: { "cm-item-caller": _vm.isCaller },
+          class: { "cm-item-caller": _vm.isCaller, disabled: _vm.disabled },
           on: {
             mouseenter: _vm.itemSelected,
             mouseleave: _vm.selectionAborted,

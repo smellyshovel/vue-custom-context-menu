@@ -88,7 +88,7 @@
                 } else {
                     // perform the item's action (if any)
                     if (this.action) {
-                        this.action();
+                        this.action(this.cm.root.target, this.cm);
                     }
 
                     // and close everything

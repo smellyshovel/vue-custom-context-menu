@@ -49,7 +49,7 @@
 
             height: 0,
 
-            target: null,
+            targetComp: null,
 
             parent: null,
             sub: null,
@@ -69,14 +69,14 @@
                 return this.$parent;
             },
 
-            root() {
+            target() {
                 let parent = this;
 
                 while (parent.parent) {
                     parent = parent.parent;
                 }
 
-                return parent;
+                return parent.targetComp;
             }
         },
 
@@ -101,7 +101,7 @@
                     this.open(event, caller);
                     this.openTimer = null;
 
-                    this.$emit("opened", this.target || caller, this);
+                    this.$emit("opened", this.target, this);
                 }
             },
 
@@ -129,11 +129,15 @@
                 this.show = false;
 
                 this.height = "auto";
-                this.target = null;
+                this.targetComp = null;
             },
 
             abstractClose() {
                 if (this.show) {
+                    // this.target relies on this.parent that is gonna be deleted
+                    // before the @closed is emmited, so we need to save it beforehand
+                    var target = this.target;
+
                     if (this.parent) {
                         this.parent.sub = null;
                         this.parent = null;
@@ -147,7 +151,7 @@
                     this.close();
                     this.closeTimer = null;
 
-                    this.$emit("closed", this);
+                    this.$emit("closed", target, this);
                 }
             },
 

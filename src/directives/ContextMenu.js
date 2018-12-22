@@ -32,7 +32,7 @@ export default function(options) { return {
 
                     if (!binding.modifiers["disabled"]) {
                         let {overlay, cm} = findOverlayAndCm();
-                        cm.target = vNode.componentInstance || vNode.elm;
+                        cm.targetComp = vNode.componentInstance || vNode.elm;
 
                         overlay.open();
                         cm.immediateOpen(event);

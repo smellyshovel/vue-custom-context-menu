@@ -1,6 +1,6 @@
 {
   "name": "vue-custom-context-menu",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "🖱 A Vue.js Plugin that allows you to build Context Menus for your app fast 🚀 and simple 🧩",
   "main": "dist/vue-custom-context-menu.umd.js",
   "module": "dist/vue-custom-context-menu.esm.js",

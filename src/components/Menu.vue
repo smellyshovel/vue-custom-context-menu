@@ -44,7 +44,8 @@
 
             style: {
                 left: 0,
-                top: 0
+                top: 0,
+                zIndex: 1
             },
 
             height: 0,
@@ -83,6 +84,7 @@
         methods: {
             open(event, caller) {
                 this.show = true;
+                this.style.zIndex = caller ? this.parent.style.zIndex + 1 : this.style.zIndex;
 
                 this.setPosition(event, caller);
 
@@ -127,6 +129,7 @@
 
             close() {
                 this.show = false;
+                this.style.zIndex = 1;
 
                 this.height = "auto";
                 this.targetComp = null;

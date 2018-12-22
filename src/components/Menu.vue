@@ -122,10 +122,10 @@
 
             close() {
                 this.show = false;
-                this.style.zIndex = 1;
-
-                this.style.height = "auto";
+                
                 this.targetComp = null;
+                this.style.height = "auto";
+                this.style.zIndex = 1;
             },
 
             abstractClose() {

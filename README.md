@@ -1,6 +1,6 @@
 # Vue Custom Context Menu
 
-🖱 [BETA] A Vue.js Plugin that allows you to build Context Menus for your app fast 🚀 and simple 🧩
+[BETA] A Vue.js plugin that allows you to build 🖱 Context Menus for your app fast 🚀 and simple 🧩. Supports 🗂 nested Context Menus! Allows for full 🛠 customisation!
 
 **[ Note that the _*Vue Custom Context Menu*_ is in BETA till v2 which means that the public API is _unstable_ and may change at any time without any warnings! _The release of v2 is expected no later than 01/01/2019_ ]**
 

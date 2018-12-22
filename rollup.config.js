@@ -11,12 +11,16 @@ export default {
 
     plugins: [
         VuePlugin({
-            css: true, // Dynamically inject css as a <style> tag
-            compileTemplate: true, // Explicitly convert template to render function
+            css: true,
+            compileTemplate: true,
         }),
         BabelPlugin({
             exclude: "node_modules/**"
         }),
-        process.env.MINIFY ? BabelMinifyPlugin() : function() {}
+        // minify the output when building for unpkg
+        process.env.MINIFY ? BabelMinifyPlugin({
+            comments: false,
+            banner: "/* Matthew Mamonov aka smellyshovel <g.smellyshovel@gmail.com> (https://github.com/smellyshovel/vue-custom-context-menu) © 2018 */"
+        }) : function() {}
     ]
 };

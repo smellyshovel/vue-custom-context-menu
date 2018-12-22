@@ -24,10 +24,12 @@ const Plugin = {
 };
 
 // Auto-install when Vue is found (eg. in browser via <script> tag)
+let GlobalVue;
+
 if (typeof window !== 'undefined') {
-	var GlobalVue = window.Vue;
+	GlobalVue = window.Vue;
 } else if (typeof global !== 'undefined') {
-	var GlobalVue = global.Vue;
+	GlobalVue = global.Vue;
 }
 
 if (GlobalVue) {

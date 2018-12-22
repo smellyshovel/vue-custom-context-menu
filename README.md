@@ -1,5 +1,9 @@
 # Vue Custom Context Menu
 
+🖱 [BETA] A Vue.js Plugin that allows you to build Context Menus for your app fast 🚀 and simple 🧩
+
+**[ Note that the _*Vue Custom Context Menu*_ is in BETA till v2 which means that the public API is _unstable_ and may change at any time without any warnings! _The release of v2 is expected no later than 01/01/2019_ ]**
+
 ## Installation
 
 1. Install the NPM package
@@ -29,9 +33,11 @@ Or you can also include it on the page as a separate `<script>`
 <script src="https://unpkg.com/vue-custom-context-menu"></script>
 ```
 
+*Refer [here](#) for more details on installation*
+
 ## Usage
 
-Bind Context Menus to elements and components using the `v-context-menu` directive:
+Bind Context Menus to elements and components using the `v-context-menu` directive
 
 ```html
 <custom-header v-context-menu="'#cm-for-custom-header'"></custom-header>
@@ -117,6 +123,8 @@ Or use a separate component with `ref="vccm-context-menus"` to keep your app ins
 </template>
 ```
 
+*Refer [here](#) for more details on usage*
+
 ## Contribution
 
 1. Fork the repo
@@ -124,3 +132,5 @@ Or use a separate component with `ref="vccm-context-menus"` to keep your app ins
 1. Make changes under `npm run watch:esm` or `npm run watch:umd`
 1. Build dist-files using `npm run build`
 1. Create a pull request
+
+*Refer [here](#) for more details on contribution*

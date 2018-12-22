@@ -1,7 +1,7 @@
 {
   "name": "vue-custom-context-menu",
   "version": "1.0.17",
-  "description": "🖱 A Vue.js Plugin that allows you to build Context Menus for your app fast 🚀 and simple 🧩",
+  "description": "A Vue.js plugin that allows you to build 🖱 Context Menus for your app fast 🚀 and simple 🧩. Supports 🗂 nested Context Menus! Allows for full 🛠 customisation!",
   "main": "dist/vue-custom-context-menu.umd.js",
   "module": "dist/vue-custom-context-menu.esm.js",
   "unpkg": "dist/vue-custom-context-menu.min.js",
@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/smellyshovel/vue-custom-context-menu#readme",
   "peerDependencies": {
-    "vue": "^2.5.0"
+    "vue": "^2.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",

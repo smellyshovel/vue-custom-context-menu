@@ -101,7 +101,7 @@
                     this.open(event, caller);
                     this.openTimer = null;
 
-                    this.$emit("opened", event, this);
+                    this.$emit("opened", this.target || caller, this);
                 }
             },
 

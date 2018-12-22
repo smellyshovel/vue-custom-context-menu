@@ -44,13 +44,14 @@ Bind Context Menus to elements and components using the `v-context-menu` directi
 
 <main>
     <ol>
-        <li
+        <file-item is="li"
             v-for="file in files"
             :key="file.id"
+            :links="{plain: file.links.plain, zipped: file.links.zipped}"
 
             v-context-menu="'[data-cm-for-files]'"
 
-        >{{ file.name }}</li>
+        >{{ file.name }}</file-item>
     </ol>
 </main>
 ```
@@ -82,7 +83,8 @@ Define the Context Menus inside the `<vccm-overlay>` component on the app instan
 
         <context-menu
             data-cm-for-files
-            :delay="500">
+            :delay="500"
+            @closed="(target) => target.tempHighlight()">
 
             <cm-item :action="openFile">Open</cm-item>
             <cm-item v-context-menu="'#cm-for-download-options'">Download</cm-item>
@@ -95,9 +97,12 @@ Define the Context Menus inside the `<vccm-overlay>` component on the app instan
             <cm-item :action="deleteFile">Delete</cm-item>
         </context-menu>
 
-        <context-menu id="#cm-for-download-options">
-            <cm-item :action="downloadPlain">As it is</cm-item>
-            <cm-item :action="downloadArchive">Zip-compressed</cm-item>
+        <context-menu
+            id="#cm-for-download-options"
+            @opened="checkServersLoad">
+
+            <cm-item :action="(target) => download(target.links.plain)">As it is</cm-item>
+            <cm-item :action="(target) => download(target.links.zipped)">Zip-compressed</cm-item>
         </context-menu>
     </vccm-overlay>
 </div>

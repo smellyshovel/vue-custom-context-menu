@@ -24,7 +24,7 @@
         props: {
             transition: String,
             shift: {
-                type: [String],
+                type: String,
                 default: "x",
                 validator(value) {
                     return ["fit", "x", "y", "both"].includes(value);

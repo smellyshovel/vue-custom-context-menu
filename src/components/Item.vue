@@ -1,7 +1,7 @@
 <template>
     <li
         class="cm-item"
-        :class="{'cm-item-caller': isCaller, disabled}"
+        :class="{caller: isCaller, disabled}"
 
         @mouseenter="itemSelected"
         @mouseleave="selectionAborted"
@@ -18,7 +18,7 @@
             disabled: Boolean
         },
 
-        data() {return {
+        data() { return {
             calls: null
         }},
 

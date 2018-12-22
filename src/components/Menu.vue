@@ -45,10 +45,9 @@
             style: {
                 left: 0,
                 top: 0,
+                height: "auto",
                 zIndex: 1
             },
-
-            height: 0,
 
             targetComp: null,
 
@@ -58,12 +57,6 @@
             openTimer: null,
             closeTimer: null
         }},
-
-        watch: {
-            height(newValue) {
-                this.$set(this.style, "height", newValue);
-            }
-        },
 
         computed: {
             overlay() {
@@ -131,7 +124,7 @@
                 this.show = false;
                 this.style.zIndex = 1;
 
-                this.height = "auto";
+                this.style.height = "auto";
                 this.targetComp = null;
             },
 
@@ -243,7 +236,7 @@
                         this.style.top = "0px";
 
                         if (cmHeight > viewportHeight) {
-                            this.height = viewportHeight + "px";
+                            this.style.height = viewportHeight + "px";
                         }
                     }
                 });

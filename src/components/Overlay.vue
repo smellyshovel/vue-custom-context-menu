@@ -3,7 +3,7 @@
         :name="transition"
 
         ><div
-            id="cm-overlay"
+            id="vccm-overlay"
             v-show="show"
 
             @contextmenu.prevent.stop
@@ -21,20 +21,19 @@
         },
 
         mounted() {
-            this.$nextTick(() => {
-                if (this.penetrable) {
-                    this.$el.addEventListener("mousedown", (event) => {
-                        // without this hack "contextmenu" event would trigger on the overlay
-                        this.$el.style.display = "none";
+            if (this.penetrable) {
+                this.$el.addEventListener("mousedown", (event) => {
+                    // without this hack "contextmenu" event would trigger on the
+                    // overlay instead of the element beneath it
+                    this.$el.style.display = "none";
 
-                        this.close();
-                    });
-                } else {
-                    this.$el.addEventListener("mousedown", (event) => {
-                        this.close();
-                    });
-                }
-            });
+                    this.close();
+                });
+            } else {
+                this.$el.addEventListener("mousedown", (event) => {
+                    this.close();
+                });
+            }
         },
 
         data() {return {
@@ -84,7 +83,7 @@
 </script>
 
 <style scoped>
-    #cm-overlay {
+    #vccm-overlay {
         position: fixed;
         top: 0;
         left: 0;

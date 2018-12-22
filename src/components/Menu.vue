@@ -49,6 +49,8 @@
 
             height: 0,
 
+            target: null,
+
             parent: null,
             sub: null,
 
@@ -65,6 +67,16 @@
         computed: {
             overlay() {
                 return this.$parent;
+            },
+
+            root() {
+                let parent = this;
+
+                while (parent.parent) {
+                    parent = parent.parent;
+                }
+
+                return parent;
             }
         },
 
@@ -115,7 +127,9 @@
 
             close() {
                 this.show = false;
+
                 this.height = "auto";
+                this.target = null;
             },
 
             abstractClose() {

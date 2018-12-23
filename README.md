@@ -37,26 +37,28 @@ Or you can also include it on the page as a separate `<script>`
 
 ## Usage
 
-Bind Context Menus to elements and components using the `v-context-menu` directive
+Bind Context Menus to elements and components using the `v-context-menu` directive. Disable Context Menus for a specific element via the `.disabled` modifier (affects all of its children if not otherwise specified for a specific child (and thus its children as well). Provide the `.no-native` modifier to to show a custom Context Menu instead of the browser's native one even if the `[alt]` key was holded during the opening
 
 ```html
-<custom-header v-context-menu="'#cm-for-custom-header'"></custom-header>
+<div id="wrapper" v-context-menu.disabled>
+    <custom-header v-context-menu.no-native="'#cm-for-custom-header'"></custom-header>
 
-<main>
-    <ol>
-        <file-item is="li"
-            v-for="file in files"
-            :key="file.id"
-            :links="{plain: file.links.plain, zipped: file.links.zipped}"
+    <main>
+        <ol>
+            <file-item is="li"
+                v-for="file in files"
+                :key="file.id"
+                :links="{plain: file.links.plain, zipped: file.links.zipped}"
 
-            v-context-menu="'[data-cm-for-files]'"
+                v-context-menu="'[data-cm-for-files]'"
 
-        >{{ file.name }}</file-item>
-    </ol>
-</main>
+            >{{ file.name }}</file-item>
+        </ol>
+    </main>
+</div>
 ```
 
-Define the Context Menus inside the `<vccm-overlay>` component on the app instance's level
+Define the `<context-menu>`s inside the `<vccm-overlay>` component on the app instance's level. Customise behavior by passing props. Use the `<cm-item>` component to define Context Menus' items passing the `action` prop to specify the action to be performed or use the familiar `v-context-menu` directive to open another Context Menu as a nested one when the item is selected
 
 ```html
 <div id="app">

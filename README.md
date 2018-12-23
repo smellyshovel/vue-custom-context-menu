@@ -35,7 +35,7 @@ Or you can also include it on the page as a separate `<script>`
 
 ## Usage
 
-Bind Context Menus to elements and components using the `v-context-menu` directive. Disable Context Menus for a specific element via the `.disabled` modifier (affects all of its children if not otherwise specified for a specific child (and thus its children as well). Provide the `.no-native` modifier to to show a custom Context Menu instead of the browser's native one even if the `[alt]` key was holded during the opening
+**Bind** Context Menus to elements and components using the `v-context-menu` directive. **Disable** Context Menus for a specific element via the `.disabled` modifier (which also affects all of its children if not otherwise specified for a specific child (and thus its children as well). Provide the `.no-native` modifier to to show a custom Context Menu instead of the **browser's native** one even if the `[alt]` key was holded during the opening
 
 ```html
 <div id="wrapper" v-context-menu.disabled>
@@ -56,7 +56,7 @@ Bind Context Menus to elements and components using the `v-context-menu` directi
 </div>
 ```
 
-Define the `<context-menu>`s inside the `<vccm-overlay>` component on the app instance's level. Customise behavior by passing props. Use the `<cm-item>` component to define Context Menus' items passing the `action` prop to specify the action to be performed or use the familiar `v-context-menu` directive to open another Context Menu as a nested one when the item is selected
+**Define** the `<context-menu>`s inside the `<vccm-overlay>` component on the app instance's level. **Customise** behavior by passing props. Use the `<cm-item>` component to define Context Menus' items passing the `action` prop to specify the **action** to be performed or use the familiar `v-context-menu` directive to open another Context Menu as a **nested** one when the item is selected
 
 ```html
 <div id="app">
@@ -108,7 +108,7 @@ Define the `<context-menu>`s inside the `<vccm-overlay>` component on the app in
 </div>
 ```
 
-Or use a separate component with `ref="vccm-context-menus"` to keep your app instance nice and clean
+You can also bring the `<vccm-overlay>` to another component that must be included on the app instance's level with `ref="vccm-context-menus"` to keep your code nice and clean
 
 ```html
 <!-- App.vue -->
@@ -136,6 +136,6 @@ Or use a separate component with `ref="vccm-context-menus"` to keep your app ins
 1. Run `npm i`
 1. Make changes under `npm run watch:esm` or `npm run watch:umd`
 1. Build dist-files using `npm run build`
-1. Create a pull request
+1. Create a pull request to the "devel" branch
 
 *Refer [here](#) for more details on contribution*

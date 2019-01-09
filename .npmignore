@@ -3,3 +3,4 @@ src/
 .babelrc
 .browserslistrc
 rollup.config.js
+CONTRIBUTING.md

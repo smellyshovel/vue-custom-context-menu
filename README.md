@@ -31,7 +31,7 @@ Or you can also include it on the page as a separate `<script>`
 <script src="https://unpkg.com/vue-custom-context-menu"></script>
 ```
 
-*Refer [here](#) for more details on installation*
+*Refer [here](https://github.com/smellyshovel/vue-custom-context-menu/wiki/Installation) for more details on installation*
 
 ## Usage
 
@@ -128,7 +128,7 @@ You can also bring the `<vccm-overlay>` to another component that must be includ
 </template>
 ```
 
-*Refer [here](#) for more details on usage*
+*Refer [here](https://github.com/smellyshovel/vue-custom-context-menu/wiki/Usage) for more details on usage or [here](https://github.com/smellyshovel/vue-custom-context-menu/wiki/QnA) for the QnA*
 
 ## Contribution
 
@@ -138,4 +138,4 @@ You can also bring the `<vccm-overlay>` to another component that must be includ
 1. Build dist-files using `npm run build`
 1. Create a pull request to the "devel" branch
 
-*Refer [here](#) for more details on contribution*
+*Refer [here](https://github.com/smellyshovel/vue-custom-context-menu/blob/master/CONTRIBUTING.md) for more details on contribution*

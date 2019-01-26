@@ -1,8 +1,8 @@
 export default function(options) { return {
     bind: function(el, binding, vNode) {
         let findOverlayAndCm = () => {
-            if (options.ref in vNode.context.$refs) {
-                var overlay = vNode.context.$refs[options.ref].$children.find((child) => {
+            if (options.ref in vNode.context.$root.$children[0].$refs) {
+                var overlay = vNode.context.$root.$children[0].$refs[options.ref].$children.find((child) => {
                     return child.$options._componentTag === options.overlay;
                 });
             } else {

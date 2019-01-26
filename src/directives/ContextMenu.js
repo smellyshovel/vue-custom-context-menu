@@ -1,29 +1,31 @@
+let overlay, cm;
+
+let findOverlayAndCm = (options, el, binding, vNode) => {
+    if (options.ref in vNode.context.$root.$children[0].$refs) {
+        overlay = vNode.context.$root.$children[0].$refs[options.ref].$children.find((child) => {
+            return child.$options._componentTag === options.overlay;
+        });
+    } else {
+        overlay = vNode.context.$children.find((child) => {
+            return child.$options._componentTag === options.overlay;
+        });
+    }
+
+    cm = overlay.$children.find((child) => {
+        return child.$el === document.querySelector(binding.value);
+    });
+};
+
 export default function(options) { return {
     bind: function(el, binding, vNode) {
-        let findOverlayAndCm = () => {
-            if (options.ref in vNode.context.$root.$children[0].$refs) {
-                var overlay = vNode.context.$root.$children[0].$refs[options.ref].$children.find((child) => {
-                    return child.$options._componentTag === options.overlay;
-                });
-            } else {
-                var overlay = vNode.context.$children.find((child) => {
-                    return child.$options._componentTag === options.overlay;
-                });
-            }
-
-            let cm = overlay.$children.find((child) => {
-                return child.$el === document.querySelector(binding.value);
-            });
-
-            return {overlay, cm};
-        };
-
         if (vNode.componentInstance && vNode.componentOptions.tag === options.item) {
             vNode.context.$nextTick(() => {
-                let {overlay, cm} = findOverlayAndCm();
+                findOverlayAndCm(options, el, binding, vNode);
                 vNode.componentInstance.calls = cm;
             });
         } else {
+            findOverlayAndCm(options, el, binding, vNode);
+
             el.addEventListener("contextmenu", (event) => {
                 event.stopPropagation();
 
@@ -31,7 +33,6 @@ export default function(options) { return {
                     event.preventDefault();
 
                     if (!binding.modifiers["disabled"]) {
-                        let {overlay, cm} = findOverlayAndCm();
                         cm.targetComp = vNode.componentInstance || vNode.elm;
 
                         overlay.open();
@@ -39,6 +40,12 @@ export default function(options) { return {
                     }
                 }
             });
+        }
+    },
+
+    update: function(el, binding, vNode) {
+        if (binding.oldValue !== binding.value) {
+            findOverlayAndCm(options, el, binding, vNode);
         }
     }
 }};

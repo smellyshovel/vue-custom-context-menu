@@ -4,37 +4,34 @@
     global.VCCM = factory();
 }(typeof self !== 'undefined' ? self : this, function () { 'use strict';
 
+    var overlay, cm;
+
+    var findOverlayAndCm = function findOverlayAndCm(options, el, binding, vNode) {
+      if (options.ref in vNode.context.$root.$children[0].$refs) {
+        overlay = vNode.context.$root.$children[0].$refs[options.ref].$children.find(function (child) {
+          return child.$options._componentTag === options.overlay;
+        });
+      } else {
+        overlay = vNode.context.$children.find(function (child) {
+          return child.$options._componentTag === options.overlay;
+        });
+      }
+
+      cm = overlay.$children.find(function (child) {
+        return child.$el === document.querySelector(binding.value);
+      });
+    };
+
     function ContextMenuDirective (options) {
       return {
         bind: function bind(el, binding, vNode) {
-          var findOverlayAndCm = function findOverlayAndCm() {
-            if (options.ref in vNode.context.$root.$children[0].$refs) {
-              var overlay = vNode.context.$root.$children[0].$refs[options.ref].$children.find(function (child) {
-                return child.$options._componentTag === options.overlay;
-              });
-            } else {
-              var overlay = vNode.context.$children.find(function (child) {
-                return child.$options._componentTag === options.overlay;
-              });
-            }
-
-            var cm = overlay.$children.find(function (child) {
-              return child.$el === document.querySelector(binding.value);
-            });
-            return {
-              overlay: overlay,
-              cm: cm
-            };
-          };
-
           if (vNode.componentInstance && vNode.componentOptions.tag === options.item) {
             vNode.context.$nextTick(function () {
-              var _findOverlayAndCm = findOverlayAndCm(),
-                  cm = _findOverlayAndCm.cm;
-
+              findOverlayAndCm(options, el, binding, vNode);
               vNode.componentInstance.calls = cm;
             });
           } else {
+            findOverlayAndCm(options, el, binding, vNode);
             el.addEventListener("contextmenu", function (event) {
               event.stopPropagation();
 
@@ -42,16 +39,17 @@
                 event.preventDefault();
 
                 if (!binding.modifiers["disabled"]) {
-                  var _findOverlayAndCm2 = findOverlayAndCm(),
-                      overlay = _findOverlayAndCm2.overlay,
-                      cm = _findOverlayAndCm2.cm;
-
                   cm.targetComp = vNode.componentInstance || vNode.elm;
                   overlay.open();
                   cm.immediateOpen(event);
                 }
               }
             });
+          }
+        },
+        update: function update(el, binding, vNode) {
+          if (binding.oldValue !== binding.value) {
+            findOverlayAndCm(options, el, binding, vNode);
           }
         }
       };

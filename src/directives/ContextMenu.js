@@ -32,7 +32,7 @@ export default function(options) { return {
                 if (!binding.modifiers["no-native"] ? event.altKey === false : true) {
                     event.preventDefault();
 
-                    if (!binding.modifiers["disabled"]) {
+                    if (!binding.modifiers["disabled"] && cm) {
                         cm.targetComp = vNode.componentInstance || vNode.elm;
 
                         overlay.open();

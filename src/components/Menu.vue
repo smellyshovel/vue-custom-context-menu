@@ -1,22 +1,18 @@
 <template>
-    <transition
-        :name="transition"
+    <div
+        class="cm"
+        v-show="show"
+        :style="style"
 
-        ><div
-            class="cm"
-            v-show="show"
-            :style="style"
+        @mouseenter="preventCollapsing"
+        @mousedown.stop
 
-            @mouseenter="preventCollapsing"
-            @mousedown.stop
-
-            ><div>
-                <ol>
-                    <slot></slot>
-                </ol>
-            </div>
+        ><div>
+            <ol>
+                <slot></slot>
+            </ol>
         </div>
-    </transition>
+    </div>
 </template>
 
 <script>
@@ -122,7 +118,7 @@
 
             close() {
                 this.show = false;
-                
+
                 this.targetComp = null;
                 this.style.height = "auto";
                 this.style.zIndex = 1;

@@ -35,7 +35,7 @@ module.exports = {
 
     resolve: {
         alias: {
-            "vue-custom-context-menu": Path.join(__dirname, "..", "src/main.js")
+            "vue-custom-context-menu": Path.join(__dirname, "..", "src")
         }
     },
 

@@ -3,7 +3,7 @@ import BabelPlugin from "rollup-plugin-babel";
 import BabelMinifyPlugin from 'rollup-plugin-babel-minify';
 
 export default {
-    input: "src/main.js",
+    input: "src/index.js",
 
     output: {
         name: "VCCM"

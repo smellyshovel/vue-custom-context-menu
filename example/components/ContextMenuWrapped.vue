@@ -1,6 +1,6 @@
 <template>
     <context-menu ref="wrapped-context-menu">
-        <div>test</div>
+        <div>TEST ITEM WRAPPED</div>
     </context-menu>
 </template>
 

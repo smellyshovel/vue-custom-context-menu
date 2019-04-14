@@ -1,10 +1,12 @@
 import ContextMenuDirective from "./v-context-menu.js";
-import ContextMenuComponent from "./components/Menu.vue";
+import ContextMenuComponent from "./components/ContextMenu.vue";
+import ContextMenuItemComponent from "./components/ContextMenuItem.vue";
 
 const Plugin = {
     install(Vue) {
         Vue.directive("context-menu", ContextMenuDirective);
-        Vue.component("context-menu", ContextMenuComponent);
+        Vue.component("ContextMenu", ContextMenuComponent);
+        Vue.component("ContextMenuItem", ContextMenuItemComponent);
     }
 };
 

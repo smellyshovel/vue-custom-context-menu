@@ -36,8 +36,11 @@ function bindContextMenu(el, binding, vNode) {
                     used on the <cm-item> component which requires some different treatment.
                 */
 
-                if (vNode.componentInstance && vNode.$options._componentTag === "cm-item") { // v-context-menu is used on the <cm-item> component
-                    console.log("cm-item detected");
+                if (vNode.componentInstance && vNode.componentInstance.$options._componentTag === "context-menu-item") { // v-context-menu is used on the <cm-item> component
+                    // vNode.context.$nextTick(() => {
+                        console.log("here");
+                        vNode.componentInstance.calls = cm;
+                    // });
                 } else { // v-context-menu is used on any other element
                     let listener = (event) => {
                         event.stopPropagation();
@@ -70,8 +73,8 @@ function closeAndUnbindContextMenu(element) {
     // remove the existing event listener (it may possibly be replaced with a new one later if the function is called from the update hook)
     element.removeEventListener("contextmenu", listener);
 
-    // close the context menu if it's not null
-    if (cm) cm.close();
+    // close the context menu if it's not null and if it's not opened for another element
+    if (cm && cm.target === element) cm.close();
 
     // delete the record in the Map in order to prevent potential memory leaks
     BoundContextMenus.delete(element);

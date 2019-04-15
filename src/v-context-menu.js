@@ -8,7 +8,10 @@ function bindContextMenu(el, binding, vNode) {
     if (binding.value === null) { // disable the native context menu if the v-context-menu value is null
         let listener = (event) => {
             event.stopPropagation();
-            event.preventDefault();
+
+            if (!event.altKey) { // allow to open the native context menu
+                event.preventDefault();
+            }
         };
 
         // save the element: listener, cm triplet and attach the listener

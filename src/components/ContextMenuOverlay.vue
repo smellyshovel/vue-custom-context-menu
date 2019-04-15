@@ -1,9 +1,11 @@
 <template>
 <div
-    @click="close"
-    @contextmenu.prevent.stop
     class="context-menu-overlay"
-    :class="{ tangible }"
+    :class="{ root: isRoot }"
+    :style="{ zIndex }"
+
+    @mousedown="close($event)"
+    v-context-menu="null"
 >
     <slot></slot>
 </div>
@@ -12,51 +14,50 @@
 <script>
 export default {
     props: {
-        tangible: {
+        isRoot: {
             type: Boolean,
             required: true
         },
 
-        tangible: {
-            type: Boolean,
+        zIndex: {
+            type: Number,
             required: true
         },
+
+        penetrable: {
+            type: Boolean,
+            required: true
+        }
     },
 
     mounted() {
-        if (!this.tangible) return;
-
+        if (!this.isRoot) return;
         document.documentElement.style.overflow = "hidden";
-        document.addEventListener("keydown", this.listeners.closeOnEscKey);
-
-        if (this.penetrable) {
-            this.$el.addEventListener("mousedown", (event) => {
-                this.$el.style.display = "none";
-                this.close();
-            });
-        } else {
-            this.$el.addEventListener("mousedown", (event) => {
-                this.close();
-            });
-        }
     },
 
-    data() {return {
-        listeners: {
-            closeOnEscKey: (event) => {
-                if (event.keyCode === 27) {
-                    this.close();
-                }
-            }
-        }
-    }},
-
     methods: {
-        close() {
-            this.$emit("close");
+        close(event) {
+            // the next line doesn't allow to close the context menu if the native context menu was requested
+            if (event.which === 3 && event.altKey) return;
 
-            document.documentElement.style.overflow = "";
-            document.removeEventListener("keydown", this.listeners.closeOnEscKey);
+            // DRY
+            let close = () => {
+                this.$emit("close");
+                document.documentElement.style.overflow = "";
+            };
+
+            // if the overlay is penetrable then a new context menu will be opened because the mousedown event triggers first
+            // else the overlay won't yet be closed when the contextmenu event takes place hence no other context menus will open
+            if (this.penetrable) {
+                close();
+            } else {
+                event.stopPropagation();
+
+                setTimeout(() => {
+                    close();
+                }, 0);
+            }
+
         }
     }
 }
@@ -71,11 +72,10 @@ export default {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    z-index: 100000;
     pointer-events: none;
 }
 
-.tangible {
+.root {
     pointer-events: initial;
 }
 </style>

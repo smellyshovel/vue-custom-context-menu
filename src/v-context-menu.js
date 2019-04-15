@@ -33,14 +33,15 @@ function bindContextMenu(el, binding, vNode) {
                 /*
                     Here the `cm` variable definetely points to a <context-menu> instance.
                     The problem though is that the v-context-menu directive might be
-                    used on the <cm-item> component which requires some different treatment.
+                    used on the <context-menu-item> component which requires some different treatment.
                 */
 
-                if (vNode.componentInstance && vNode.componentInstance.$options._componentTag === "context-menu-item") { // v-context-menu is used on the <cm-item> component
-                    // vNode.context.$nextTick(() => {
-                        console.log("here");
-                        vNode.componentInstance.calls = cm;
-                    // });
+                if (vNode.componentInstance && vNode.componentInstance.$options._componentTag === "context-menu-item") { // v-context-menu is used on the <context-menu-item> component
+                    // save the element: listener, cm triplet (the listeners are added at the <context-menu-item> component's level)
+                    BoundContextMenus.set(vNode.elm, { listener: null, cm });
+
+                    // tell the <context-menu-item> component that it open a nested context menu
+                    vNode.componentInstance.calls = cm;
                 } else { // v-context-menu is used on any other element
                     let listener = (event) => {
                         event.stopPropagation();
@@ -70,8 +71,8 @@ function closeAndUnbindContextMenu(element) {
     // find the listener and the context menu for the provided element
     let { listener, cm } = BoundContextMenus.get(element);
 
-    // remove the existing event listener (it may possibly be replaced with a new one later if the function is called from the update hook)
-    element.removeEventListener("contextmenu", listener);
+    // remove the existing event listener if any (it may possibly be replaced with a new one later if the function is called from the update hook)
+    if (listener) element.removeEventListener("contextmenu", listener);
 
     // close the context menu if it's not null and if it's not opened for another element
     if (cm && cm.target === element) cm.close();

@@ -27,13 +27,13 @@ export default {
 
     data() {
         return {
-            calls: null
+            calls: null, // is set in the v-context-menu.js; points to the context menu this item opens
         }
     },
 
     computed: {
         cm() {
-            return this.$parent;
+            return this.$parent.$parent;
         },
 
         isCaller() {
@@ -43,13 +43,16 @@ export default {
 
     methods: {
         itemSelected(event) {
-            // if the cursor enters a caller item
+            // don't do anything for disabled items
+            if (this.disabled) return;
+
+            // if the cursor entered a caller item
             if (this.isCaller) {
-                // if the target sub is already opened
+                // if there's already an opened sub and it's the same that this item calls
                 if (this.cm.sub === this.calls) {
-                    // cancel its closing
+                    // then cancel its closing
                     this.calls.cancelDelayedClose();
-                // if there's no opened sub or another (not target) sub is opened
+                // if there's no opened sub or another (not the one this item calls) sub is opened
                 } else {
                     // if another sub is opened
                     if (this.cm.sub) {
@@ -60,11 +63,11 @@ export default {
                     // delay opening of the target one
                     this.calls.delayedOpen(event, this.$el, this.cm);
                 }
-            // if the cursor enters a not-a-caller item
+            // if the cursor entered a not-a-caller item
             } else {
                 // and if there's an opened sub
                 if (this.cm.sub) {
-                    // then just delay its closing if it hadn't been initiated previously already
+                    // then just delay its closing if it hadn't been initiated already
                     if (!this.cm.sub.closeTimer) {
                         this.cm.sub.delayedClose();
                     }
@@ -73,17 +76,23 @@ export default {
         },
 
         selectionAborted(event) {
+            // don't do anything for disabled items
+            if (this.disabled) return;
+
             // only track "mouseleave" for callers
             if (this.isCaller) {
-                // cancel target's delayed opening
+                // cancel delayed opening of the target cm (it has been initiated when the cursor entered this item)
                 this.calls.cancelDelayedOpen();
             }
         },
 
         itemTriggered(event) {
+            // don't do anything for disabled items
+            if (this.disabled) return;
+
             // if a caller item is pressed
             if (this.isCaller) {
-                // if there's an already opened sub (or no such at all)
+                // if there's already an opened sub and it's not the same that this item calls (or if there's no opened sub at all)
                 if (this.cm.sub !== this.calls) {
                     // if there's an opened sub already
                     if (this.cm.sub) {
@@ -91,18 +100,15 @@ export default {
                         this.cm.sub.immediateClose();
                     }
 
-                    // immediately open the target one
+                    // immediately open the target context menu
                     this.calls.immediateOpen(event, this.$el, this.cm);
                 }
             // if a not-a-caller item is pressed
             } else {
-                // perform the item's action (if any)
-                if (!this.disabled) {
-                    this.action(this.cm.target, this.cm);
-                }
+                // perform the item's action
+                this.action(this.cm.target, this.cm);
 
-                // and close everything
-                this.cm.overlay.close();
+                this.cm.root.immediateClose();
             }
         }
     }

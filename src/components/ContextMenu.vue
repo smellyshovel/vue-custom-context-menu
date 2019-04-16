@@ -2,20 +2,28 @@
 <context-menu-overlay
     v-if="show"
     ref="overlay"
-    :tangible="overlayTangible"
+
+    :is-root="isRoot"
+    :z-index="zIndex"
     :penetrable="penetrable"
 
     @close="immediateClose"
 >
     <div
-        ref="cm"
-        class="context-menu"
+        ref="wrapper"
+        class="context-menu-wrapper"
+        :class="{ root: isRoot }"
         :style="style"
 
         @mouseenter="preventCollapsing"
         @mousedown.stop
     >
-        <slot></slot>
+        <div
+            ref="cm"
+            class="context-menu"
+        >
+            <slot></slot>
+        </div>
     </div>
 </context-menu-overlay>
 </template>
@@ -31,12 +39,12 @@ export default {
     props: {
         penetrable: {
             type: Boolean,
-            default: true // TODO -> false
+            default: false
         },
 
         shift: {
             type: String,
-            default: "x", // TODO -> y
+            default: "x",
             validator: (value) => ["fit", "x", "y", "both"].includes(value)
         },
 
@@ -47,18 +55,51 @@ export default {
         }
     },
 
+    computed: {
+        root: {
+            cache: false,
+            get() {
+                return this.isRoot
+                    ? this
+                    : (() => {
+                        let parent = this;
+                        while (parent) {
+                            var root = parent;
+                            parent = parent.parent;
+                        }
+
+                        return root;
+                    })()
+            }
+        },
+
+        overlayElement: {
+            cache: false,
+            get() {
+                return this.$refs.overlay.$el;
+            }
+        },
+
+        wrapperElement: {
+            cache: false,
+            get() {
+                return this.$refs.wrapper;
+            }
+        }
+    },
+
     data() {
         return {
             show: false,
-            target: null,
+            target: undefined,
 
-            overlayTangible: true,
+            isRoot: undefined,
+            zIndex: 100000,
 
             style: {
                 left: 0,
                 top: 0,
-                height: "auto",
-                zIndex: 1
+                height: "auto"
             },
 
             parent: null,
@@ -72,14 +113,6 @@ export default {
     methods: {
         open(event, caller) {
             this.show = true;
-
-            this.style.zIndex = caller
-                ? this.parent.style.zIndex + 1
-                : this.style.zIndex;
-
-            this.overlayTangible = caller
-                ? false
-                : true;
 
             this.setPosition(event, caller);
 
@@ -95,6 +128,11 @@ export default {
                 if (parent) {
                     this.parent = parent;
                     this.parent.sub = this;
+
+                    this.isRoot = false;
+                    this.zIndex = parent.zIndex + 1;
+                } else {
+                    this.isRoot = true;
                 }
 
                 this.open(event, caller);
@@ -196,14 +234,14 @@ export default {
         },
 
         transpose(caller) {
-            let viewportWidth = this.$refs.overlay.$el.getBoundingClientRect().width;
-            let viewportHeight = this.$refs.overlay.$el.getBoundingClientRect().height;
+            let viewportWidth = this.overlayElement.getBoundingClientRect().width;
+            let viewportHeight = this.overlayElement.getBoundingClientRect().height;
 
-            let cmWidth = this.$refs.cm.getBoundingClientRect().width;
-            let cmHeight = this.$refs.cm.getBoundingClientRect().height;
+            let cmWidth = this.wrapperElement.getBoundingClientRect().width;
+            let cmHeight = this.wrapperElement.getBoundingClientRect().height;
 
-            let furthestX = this.$refs.cm.getBoundingClientRect().right;
-            let furthestY = this.$refs.cm.getBoundingClientRect().bottom;
+            let furthestX = this.wrapperElement.getBoundingClientRect().right;
+            let furthestY = this.wrapperElement.getBoundingClientRect().bottom;
 
             if (furthestX >= viewportWidth) {
                 if (this.shift === "x" || this.shift === "both") {
@@ -247,19 +285,12 @@ export default {
 </script>
 
 <style scoped>
-.context-menu-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 100000;
+.context-menu-wrapper {
+    position: absolute;
+    pointer-events: initial;
 }
 
 .context-menu {
-    position: absolute;
-    min-width: 200px;
+    height: 100%;
 }
 </style>

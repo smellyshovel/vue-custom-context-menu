@@ -1,5 +1,8 @@
 <template>
-    <div>it's just a usual component</div>
+    <div>
+        With some text
+        <slot></slot>
+    </div>
 </template>
 
 <script>

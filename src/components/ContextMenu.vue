@@ -37,6 +37,7 @@ export default {
     },
     // TODO close on esc
     // TODO test height change with dynamic items
+    // TODO ALREADY CHECKED transpose on v-context-menu's value change - works!
 
     props: {
         penetrable: {
@@ -176,11 +177,6 @@ export default {
         // the logics of context menu closing
         abstractClose() {
             if (this.show) {
-                if (this.parent) {
-                    this.parent.sub = null;
-                    this.parent = null;
-                }
-
                 if (this.sub) {
                     this.sub.immediateClose();
                     this.sub = null;

@@ -35,6 +35,8 @@ export default {
     components: {
         ContextMenuOverlay
     },
+    // TODO close on esc
+    // TODO test height change with dynamic items
 
     props: {
         penetrable: {
@@ -143,6 +145,7 @@ export default {
                     this.transpose(caller);
                 });
 
+                this.openTimer = null;
                 this.$emit("opened", this);
             }
         },
@@ -187,6 +190,7 @@ export default {
                 this.style.height = "auto";
                 this.zIndex = 100000;
 
+                this.closeTimer = null;
                 this.$emit("closed", this);
             }
         },

@@ -1,102 +1,126 @@
-// store the bound context menus here in order to be able to detach them later
+// store bound context menus here in order to be able to close them and detach event listeners later
 const BoundContextMenus = new Map();
 
-function bindContextMenu(el, binding, vNode) {
-    // each thrown error message should begin with an indication of what v-context-menu directive exactly the error is bound to
-    const ERROR_PREFIX = `[v-context-menu="${ binding.expression.replace(/\"/, "\'") }"] |`;
+function bindContextMenu(element, binding, vNode) {
+    // any error message should begin with an indication of what v-context-menu directive exactly the error is thrown for
+    const ERROR_PREFIX = `[v-context-menu="${ binding.expression.replace(/\"/, "\'") }"]`;
 
-    if (binding.value === null) { // disable the native context menu if the v-context-menu value is null
+    if (binding.value === null) { // v-context-menu="null"
+        // disables the native context menu if the alt key was not holded during the right-click
         let listener = (event) => {
             event.stopPropagation();
 
-            if (!event.altKey) { // allow to open the native context menu
+            if (!event.altKey) {
                 event.preventDefault();
             }
         };
 
-        // save the element: listener, cm triplet and attach the listener
-        BoundContextMenus.set(el, { listener, cm: null });
-        el.addEventListener("contextmenu", listener);
-    } else if (typeof binding.value === "string") { // a string is provided
-        // find a context menu among the context's refs
+        // save the [element: listener, cm triplet] and attach the listener
+        BoundContextMenus.set(element, { listener, cm: null });
+        element.addEventListener("contextmenu", listener);
+    } else if (typeof binding.value === "string") { // e.g. v-context-menu="'sample'"
+        // find the context menu with the ref="sample"
         let cm = vNode.context.$refs[binding.value];
 
-        if (cm) { // if something (either an HTML element or a component) is found
-            if (!(cm instanceof HTMLElement)) { // the context menu is definetely a component
-                if (cm.$options._componentTag !== "context-menu") { // a wrapper is used
+        if (cm) { // something (either an element or a component) is found
+            if (!(cm instanceof HTMLElement)) { // the context menu is definitely a component
+                if (cm.$options._componentTag !== "context-menu") { // assume that a wrapper is used
                     // find the actual wrapped context menu by the "wrapped-context-menu" ref
-                    // the ref-search is used because there may be other context menus incorporated in the wrapper (which are used as nested ones)
                     cm = cm.$refs["wrapped-context-menu"];
 
-                    if (!cm || cm instanceof HTMLElement || cm.$options._componentTag !== "context-menu") { // the context menu isn't found in the wrapper, or it's found but it's an HTML element, or it's a component but not the <context-menu> one
-                        throw new Error(`${ ERROR_PREFIX } Couln't find the 'ContextMenu' component with the reference 'wrapped-context-menu' inside the '${ binding.value }' wrapper-component`);
+                     // throw if the context menu isn't found in the wrapper, or it's found but it's an HTML element, or it's a component but not the <context-menu> one
+                    if (!cm || cm instanceof HTMLElement || cm.$options._componentTag !== "context-menu") {
+                        throw new Error(`${ ERROR_PREFIX } | Couldn't find the 'ContextMenu' component with the reference 'wrapped-context-menu' inside the '${ binding.value }' wrapper-component`);
                     }
                 }
 
                 /*
-                    Here the `cm` variable definetely points to a <context-menu> instance.
+                    Here the variable `cm` definitely points to a context menu instance.
                     The problem though is that the v-context-menu directive might be
-                    used on the <context-menu-item> component which requires some different treatment.
+                    used on the <context-menu-item> component which requires some
+                    different treatment.
                 */
 
                 if (vNode.componentInstance && vNode.componentInstance.$options._componentTag === "context-menu-item") { // v-context-menu is used on the <context-menu-item> component
-                    // save the element: listener, cm triplet (the listeners are added at the <context-menu-item> component's level)
+                    // save the [element: listener, cm] triplet (the listeners are attached at the <context-menu-item> component's level, see its source)
                     BoundContextMenus.set(vNode.elm, { listener: null, cm });
 
-                    // tell the <context-menu-item> component that it open a nested context menu
+                    // tell the <context-menu-item> component that it opens a nested context menu
                     vNode.componentInstance.calls = cm;
-                } else { // v-context-menu is used on any other element
+                } else { // v-context-menu is used on any other element (either an HTML element or a component)
+                     // open the context menu if the alt key was not holded during the right-click
                     let listener = (event) => {
                         event.stopPropagation();
 
-                        if (!event.altKey) { // open the context menu if the alt key was not holded during the right-click
+                        if (!event.altKey) {
                             event.preventDefault();
                             cm.immediateOpen(event);
                         }
                     };
 
-                    // save the element: listener, cm triplet and attach the listener
-                    BoundContextMenus.set(el, { listener, cm });
-                    el.addEventListener("contextmenu", listener);
+                    // save the [element: listener, cm] triplet and attach the listener
+                    BoundContextMenus.set(element, { listener, cm });
+                    element.addEventListener("contextmenu", listener);
                 }
+
+                return cm;
             } else { // the context menu is an HTML element rather than a component
-                throw new Error(`${ ERROR_PREFIX} The v-context-menu directive must point to either the 'ContextMenu' component or a 'ContextMenu' wrapper-component, but it points to a '${ cm.tagName }' HTML element`);
+                throw new Error(`${ ERROR_PREFIX} | The 'v-context-menu' directive must point to either the 'ContextMenu' component or a 'ContextMenu' wrapper-component, but it points to a '${ cm.tagName }' HTML element`);
             }
-        } else { // the ref isn't found
-            throw new Error(`${ ERROR_PREFIX} Couldn't find a context menu by the reference '${ binding.value }'`);
+        } else { // neither elements nor components with the ref="sample" are found
+            throw new Error(`${ ERROR_PREFIX} | Couldn't find a context menu by the reference '${ binding.value }'`);
         }
-    } else { // something other than null or a string is provided
-        throw new TypeError(`${ ERROR_PREFIX} The v-context-menu directive only accepts 'null' and 'string' values, but '${ typeof binding.value }' is provided`);
+    } else { // e.g. v-context-menu="undefined"
+        throw new TypeError(`${ ERROR_PREFIX} | The 'v-context-menu' directive only accepts 'null' and 'string' values, but '${ typeof binding.value }' is provided`);
     }
 }
 
-function closeAndUnbindContextMenu(element) {
+function unbindContextMenu(element) {
     // find the listener and the context menu for the provided element
     let { listener, cm } = BoundContextMenus.get(element);
 
-    // remove the existing event listener if any (it may possibly be replaced with a new one later if the function is called from the update hook)
+    // remove the existing event listener if any (there's none for nested context menus, see above)
     if (listener) element.removeEventListener("contextmenu", listener);
 
-    // close the context menu if it's not null and if it's not opened for another element
-    if (cm && cm.target === element) cm.close();
-
-    // delete the record in the Map in order to prevent potential memory leaks
+    // delete the record from the Map in order to prevent potential memory leaks
     BoundContextMenus.delete(element);
+
+    return cm;
 }
 
 export default {
-    bind(el, binding, vNode) {
-        bindContextMenu(el, binding, vNode);
+    bind(element, binding, vNode) {
+        bindContextMenu(element, binding, vNode);
     },
 
-    update(el, binding, vNode) {
+    update(element, binding, vNode) {
+        // trigger only in cases when v-context-menu directive's value has changed
         if (binding.oldValue !== binding.value) {
-            closeAndUnbindContextMenu(el);
-            bindContextMenu(el, binding, vNode)
+            // unbind the old context menu and bind the new one
+            let oldCm = unbindContextMenu(element);
+            let newCm = bindContextMenu(element, binding, vNode);
+
+            // if the old context menu is opened and it's opened for this element
+            if (oldCm && oldCm.show && oldCm.target === element) {
+                // then close it
+                oldCm.immediateClose();
+
+                // and open the new one with fake event-data
+                newCm.immediateOpen({
+                    target: element,
+                    clientX: oldCm.position.x,
+                    clientY: oldCm.position.y
+                });
+            }
         }
     },
 
-    unbind(el) {
-        closeAndUnbindContextMenu(el);
+    unbind(element) {
+        let cm = unbindContextMenu(element);
+
+        // close the unbound context menu if there was one (1), if it's opened right now (2) and if it's not opened for another target (3)
+        if (cm && cm.show && cm.target === element) {
+            cm.immediateClose();
+        }
     }
 }

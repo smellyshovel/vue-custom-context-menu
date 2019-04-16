@@ -40,21 +40,15 @@ export default {
             // the next line doesn't allow to close the context menu if the native context menu was requested
             if (event.which === 3 && event.altKey) return;
 
-            // DRY
-            let close = () => {
-                this.$emit("close");
-                document.documentElement.style.overflow = "";
-            };
-
             // if the overlay is penetrable then a new context menu will be opened because the mousedown event triggers first
             // else the overlay won't yet be closed when the contextmenu event takes place hence no other context menus will open
             if (this.penetrable) {
-                close();
+                this.$emit("close");
             } else {
                 event.stopPropagation();
 
                 setTimeout(() => {
-                    close();
+                    this.$emit("close");
                 }, 0);
             }
 

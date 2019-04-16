@@ -52,7 +52,7 @@ export default {
 
         delay: {
             type: Number,
-            default: 250,
+            default: 500,
             validator: (value) => value > 0
         }
     },
@@ -187,6 +187,7 @@ export default {
                 }
 
                 this.show = false;
+                document.documentElement.style.overflow = "";
                 this.style.height = "auto";
                 this.zIndex = 100000;
 

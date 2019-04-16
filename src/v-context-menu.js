@@ -105,8 +105,14 @@ export default {
                 // then close it
                 oldCm.immediateClose();
 
-                // and open the new one with the old one's event-data
-                newCm.immediateOpen(oldCm.event);
+                // and open the new one using the old one's data if it it's not disabled
+                if (newCm) {
+                    if (oldCm.isRoot) {
+                        newCm.immediateOpen(oldCm.event);
+                    } else {
+                        newCm.immediateOpen(oldCm.event, element, oldCm.parent);
+                    }
+                }
             }
         }
     },

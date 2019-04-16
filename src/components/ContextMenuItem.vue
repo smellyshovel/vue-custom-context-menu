@@ -1,7 +1,7 @@
 <template>
 <div
     class="context-menu-item"
-    :class="{ caller: isCaller, disabled }"
+    :class="{ caller: isCaller, disabled: isDisabled }"
 
     @mouseenter="itemSelected"
     @mouseleave="selectionAborted"
@@ -13,6 +13,7 @@
 
 <script>
 export default {
+    // TODO maybe watch disabled and if changes to true then close nested (.calls) if opened
     props: {
         action: {
             type: Function,
@@ -27,7 +28,8 @@ export default {
 
     data() {
         return {
-            calls: null, // is set in the v-context-menu.js; points to the context menu this item opens
+            calls: undefined, // is set from the v-context-menu.js; points to the context menu this item opens
+            callsNull: false // is set from the v-context-menu.js; indicates whether v-context-menu="null"
         }
     },
 
@@ -38,13 +40,17 @@ export default {
 
         isCaller() {
             return !!this.calls;
+        },
+
+        isDisabled() {
+            return this.callsNull || this.disabled;
         }
     },
 
     methods: {
         itemSelected(event) {
             // don't do anything for disabled items
-            if (this.disabled) return;
+            if (this.isDisabled) return;
 
             // if the cursor entered a caller item
             if (this.isCaller) {
@@ -77,7 +83,7 @@ export default {
 
         selectionAborted(event) {
             // don't do anything for disabled items
-            if (this.disabled) return;
+            if (this.isDisabled) return;
 
             // only track "mouseleave" for callers
             if (this.isCaller) {
@@ -88,7 +94,7 @@ export default {
 
         itemTriggered(event) {
             // don't do anything for disabled items
-            if (this.disabled) return;
+            if (this.isDisabled) return;
 
             // if a caller item is pressed
             if (this.isCaller) {

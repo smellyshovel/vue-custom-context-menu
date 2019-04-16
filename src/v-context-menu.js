@@ -6,18 +6,29 @@ function bindContextMenu(element, binding, vNode) {
     const ERROR_PREFIX = `[v-context-menu="${ binding.expression.replace(/\"/, "\'") }"]`;
 
     if (binding.value === null) { // v-context-menu="null"
-        // disables the native context menu if the alt key was not holded during the right-click
-        let listener = (event) => {
-            event.stopPropagation();
+        if (vNode.componentInstance && vNode.componentInstance.$options._componentTag === "context-menu-item") { // v-context-menu is used on the <context-menu-item> component
+            // save the [element: listener, cm] triplet (the listeners are attached at the <context-menu-item> component's level, see its source)
+            BoundContextMenus.set(vNode.elm, { listener: null, cm: null });
 
-            if (!event.altKey) {
-                event.preventDefault();
-            }
-        };
+            // tell the <context-menu-item> component that the v-context-menu="null"
+            vNode.componentInstance.calls = null;
+            vNode.componentInstance.callsNull = true;
+        } else { // v-context-menu is used on any other element (either an HTML element or a component)
+             // disables the native context menu if the alt key was not holded during the right-click
+            let listener = (event) => {
+                event.stopPropagation();
 
-        // save the [element: listener, cm triplet] and attach the listener
-        BoundContextMenus.set(element, { listener, cm: null });
-        element.addEventListener("contextmenu", listener);
+                if (!event.altKey) {
+                    event.preventDefault();
+                }
+            };
+
+            // save the [element: listener, cm] triplet and attach the listener
+            BoundContextMenus.set(element, { listener, cm: null });
+            element.addEventListener("contextmenu", listener);
+        }
+
+        return null;
     } else if (typeof binding.value === "string") { // e.g. v-context-menu="'sample'"
         // find the context menu with the ref="sample"
         let cm = vNode.context.$refs[binding.value];
@@ -47,6 +58,7 @@ function bindContextMenu(element, binding, vNode) {
 
                     // tell the <context-menu-item> component that it opens a nested context menu
                     vNode.componentInstance.calls = cm;
+                    vNode.componentInstance.callsNull = false;
                 } else { // v-context-menu is used on any other element (either an HTML element or a component)
                      // open the context menu if the alt key was not holded during the right-click
                     let listener = (event) => {

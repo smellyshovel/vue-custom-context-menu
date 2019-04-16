@@ -56,8 +56,8 @@ export default {
     },
 
     computed: {
-        root: {
-            cache: false,
+        root: { // the root context menu instance (the one that is all the nested ones' ancestor)
+            cache: false, // must be recalculated each time because the same context menu may be opened either as a root or as a nested one
             get() {
                 return this.isRoot
                     ? this
@@ -74,14 +74,14 @@ export default {
         },
 
         overlayElement: {
-            cache: false,
+            cache: false, // no reactive data to rely on -> must be recalculated each time
             get() {
                 return this.$refs.overlay.$el;
             }
         },
 
         wrapperElement: {
-            cache: false,
+            cache: false, // no reactive data to rely on -> must be recalculated each time
             get() {
                 return this.$refs.wrapper;
             }
@@ -91,19 +91,20 @@ export default {
     data() {
         return {
             show: false,
-            target: undefined,
 
-            isRoot: undefined,
-            zIndex: 100000,
+            event: undefined, // set on open; don't reset because is might be used even after the context menu closed
+
+            isRoot: true, // the context menu is root if it's not nested
+            zIndex: 100000, // incremented on open so nested context menus always spawn above each other
 
             style: {
                 left: 0,
                 top: 0,
-                height: "auto"
+                height: "auto" // TODO check if it's possible to set this in CSS
             },
 
-            parent: null,
-            sub: null,
+            parent: null, // only set for nested context menus
+            sub: null, // only set for parents; stores the nested context menu's instance
 
             openTimer: null,
             closeTimer: null
@@ -111,19 +112,10 @@ export default {
     },
 
     methods: {
-        open(event, caller) {
-            this.show = true;
-
-            this.setPosition(event, caller);
-
-            this.$nextTick(() => {
-                this.transpose(caller);
-            });
-        },
-
+        // the logics of context menu opening
         abstractOpen(event, caller, parent) {
             if (!this.show) {
-                this.target = event.target;
+                this.event = event;
 
                 if (parent) {
                     this.parent = parent;
@@ -131,22 +123,37 @@ export default {
 
                     this.isRoot = false;
                     this.zIndex = parent.zIndex + 1;
-                } else {
-                    this.isRoot = true;
                 }
 
-                this.open(event, caller);
-                this.openTimer = null;
+                this.show = true;
+
+                if (caller) {
+                    this.style.left = caller.getBoundingClientRect().right;
+                    this.style.top = caller.getBoundingClientRect().top;
+                } else {
+                    this.style.left = event.clientX;
+                    this.style.top = event.clientY;
+                }
+
+                this.style.left += "px";
+                this.style.top += "px";
+
+                // $nextTick is used because .transpose relies on the real elements' dimensions, and there're no elements yet at this point
+                this.$nextTick(() => {
+                    this.transpose(caller);
+                });
 
                 this.$emit("opened", this);
             }
         },
 
+        // public; opens the context menu immediately
         immediateOpen(event, caller, parent) {
             this.cancelDelayedOpen();
             this.abstractOpen(event, caller, parent);
         },
 
+        // public; opens the context menu after some time (defined by the parent's delay prop); is used exclusively to open nested context menus
         delayedOpen(event, caller, parent) {
             this.cancelDelayedOpen();
 
@@ -155,6 +162,7 @@ export default {
             }, parent.delay);
         },
 
+        // public; cancels the request to open the context menu
         cancelDelayedOpen() {
             if (this.openTimer) {
                 clearTimeout(this.openTimer);
@@ -162,18 +170,9 @@ export default {
             }
         },
 
-        close() {
-            this.show = false;
-
-            this.targetComp = null;
-            this.style.height = "auto";
-            this.style.zIndex = 1;
-        },
-
+        // the logics of context menu closing
         abstractClose() {
             if (this.show) {
-                var target = this.target;
-
                 if (this.parent) {
                     this.parent.sub = null;
                     this.parent = null;
@@ -184,18 +183,21 @@ export default {
                     this.sub = null;
                 }
 
-                this.close();
-                this.closeTimer = null;
+                this.show = false;
+                this.style.height = "auto";
+                this.zIndex = 100000;
 
-                this.$emit("closed", target, this);
+                this.$emit("closed", this);
             }
         },
 
+        // public; closes the context menu (and its nested ones) immediately
         immediateClose() {
             this.cancelDelayedClose();
             this.abstractClose();
         },
 
+        // public; closes the context menu (and its nested ones) after some time (defined by the parent's delay prop); is used exclusively to close nested context menus
         delayedClose() {
             this.cancelDelayedClose();
 
@@ -204,6 +206,7 @@ export default {
             }, this.parent.delay);
         },
 
+        // public; cancels the request to close the context menu
         cancelDelayedClose() {
             if (this.closeTimer) {
                 clearTimeout(this.closeTimer);
@@ -211,6 +214,7 @@ export default {
             }
         },
 
+        // cancels delayed closing of this context menu and all its parents
         preventCollapsing() {
             let parent = this;
 
@@ -220,19 +224,7 @@ export default {
             }
         },
 
-        setPosition(event, caller) {
-            if (caller) {
-                this.style.left = caller.getBoundingClientRect().right;
-                this.style.top = caller.getBoundingClientRect().top;
-            } else {
-                this.style.left = event.clientX;
-                this.style.top = event.clientY;
-            }
-
-            this.style.left += "px";
-            this.style.top += "px";
-        },
-
+        // shifts and shrinks (when necessary) the context menu
         transpose(caller) {
             let viewportWidth = this.overlayElement.getBoundingClientRect().width;
             let viewportHeight = this.overlayElement.getBoundingClientRect().height;

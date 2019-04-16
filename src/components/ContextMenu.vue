@@ -187,9 +187,12 @@ export default {
                 }
 
                 this.show = false;
-                document.documentElement.style.overflow = "";
                 this.style.height = "auto";
                 this.zIndex = 100000;
+
+                if (this.isRoot) {
+                    document.documentElement.style.overflow = "";
+                }
 
                 this.closeTimer = null;
                 this.$emit("closed", this);

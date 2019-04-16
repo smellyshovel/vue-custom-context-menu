@@ -101,16 +101,12 @@ export default {
             let newCm = bindContextMenu(element, binding, vNode);
 
             // if the old context menu is opened and it's opened for this element
-            if (oldCm && oldCm.show && oldCm.target === element) {
+            if (oldCm && oldCm.show && oldCm.event.target === element) {
                 // then close it
                 oldCm.immediateClose();
 
-                // and open the new one with fake event-data
-                newCm.immediateOpen({
-                    target: element,
-                    clientX: oldCm.position.x,
-                    clientY: oldCm.position.y
-                });
+                // and open the new one with the old one's event-data
+                newCm.immediateOpen(oldCm.event);
             }
         }
     },
@@ -119,7 +115,7 @@ export default {
         let cm = unbindContextMenu(element);
 
         // close the unbound context menu if there was one (1), if it's opened right now (2) and if it's not opened for another target (3)
-        if (cm && cm.show && cm.target === element) {
+        if (cm && cm.show && cm.event.target === element) {
             cm.immediateClose();
         }
     }

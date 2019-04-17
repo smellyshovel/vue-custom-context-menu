@@ -13,7 +13,6 @@
 
 <script>
 export default {
-    // TODO maybe watch disabled and if changes to true then close nested (.calls) if opened
     props: {
         action: {
             type: Function,
@@ -28,13 +27,12 @@ export default {
 
     data() {
         return {
-            calls: undefined, // is set from the v-context-menu.js; points to the context menu this item opens
-            callsNull: false // is set from the v-context-menu.js; indicates whether v-context-menu="null"
+            calls: undefined, // is set from the v-context-menu.js; points to the nested context menu this item opens
         }
     },
 
     computed: {
-        cm() {
+        cm() { // the context menu instance this item belongs to
             return this.$parent.$parent;
         },
 
@@ -43,7 +41,25 @@ export default {
         },
 
         isDisabled() {
-            return this.callsNull || this.disabled;
+            return this.calls === null || this.disabled;
+        }
+    },
+
+    watch: {
+        // cancel opening of the nested context menu (or close it if it's already opened) when the item suddenly becomes disabled
+        isDisabled(newValue) {
+            if (newValue === true && this.isCaller) {
+                this.calls.cancelDelayedOpen();
+                this.calls.immediateClose();
+            }
+        },
+
+        // when the nested context menu changes and the old one was about to open then cancel its opening
+        calls(newValue, oldValue) {
+            if (this.isCaller && oldValue) {
+                oldValue.cancelDelayedOpen();
+                // this.calls.immediateClose(); <- no need in this here because it's handled in the directive's update hook
+            }
         }
     },
 

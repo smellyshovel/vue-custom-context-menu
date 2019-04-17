@@ -117,6 +117,9 @@ export default {
     methods: {
         // the logics of context menu opening
         abstractOpen(event, caller, parent) {
+            // don't open a nested context menu if its parent is closed
+            if (parent && !parent.show) return;
+
             if (!this.show) {
                 this.event = event;
 
@@ -153,8 +156,11 @@ export default {
 
         // public; opens the context menu immediately
         immediateOpen(event, caller, parent) {
-            this.cancelDelayedOpen();
-            this.abstractOpen(event, caller, parent);
+            // setTimeout helps to avoid some subtle bugs by allowing other actions to complete first
+            setTimeout(() => {
+                this.cancelDelayedOpen();
+                this.abstractOpen(event, caller, parent);
+            }, 0);
         },
 
         // public; opens the context menu after some time (defined by the parent's delay prop); is used exclusively to open nested context menus
@@ -197,8 +203,11 @@ export default {
 
         // public; closes the context menu (and its nested ones) immediately
         immediateClose() {
-            this.cancelDelayedClose();
-            this.abstractClose();
+            // setTimeout helps to avoid some subtle bugs by allowing other actions to complete first
+            setTimeout(() => {
+                this.cancelDelayedClose();
+                this.abstractClose();
+            }, 0);
         },
 
         // public; closes the context menu (and its nested ones) after some time (defined by the parent's delay prop); is used exclusively to close nested context menus

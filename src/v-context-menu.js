@@ -2,7 +2,7 @@
 const BoundContextMenus = new Map();
 
 function bindContextMenu(element, binding, vNode) {
-    // any error message should begin with an indication of what v-context-menu directive exactly the error is thrown for
+    // any error message should be started with an indication of the v-context-menu directive the error is thrown for
     const ERROR_PREFIX = `[v-context-menu="${ binding.expression.replace(/\"/, "\'") }"]`;
 
     if (binding.value === null) { // v-context-menu="null"
@@ -10,11 +10,10 @@ function bindContextMenu(element, binding, vNode) {
             // save the [element: listener, cm] triplet (the listeners are attached at the <context-menu-item> component's level, see its source)
             BoundContextMenus.set(vNode.elm, { listener: null, cm: null });
 
-            // tell the <context-menu-item> component that the v-context-menu="null"
+            // tell the item instance that it's a caller-item, but it opens no nested context menus
             vNode.componentInstance.calls = null;
-            vNode.componentInstance.callsNull = true;
         } else { // v-context-menu is used on any other element (either an HTML element or a component)
-             // disables the native context menu if the alt key was not holded during the right-click
+             // disable the native context menu if the alt key was not holded during the right-click
             let listener = (event) => {
                 event.stopPropagation();
 
@@ -35,7 +34,7 @@ function bindContextMenu(element, binding, vNode) {
 
         if (cm) { // something (either an element or a component) is found
             if (!(cm instanceof HTMLElement)) { // the context menu is definitely a component
-                if (cm.$options._componentTag !== "context-menu") { // assume that a wrapper is used
+                if (cm.$options._componentTag !== "context-menu") { // assume that a wrapper is used if the component is not the <context-menu> one
                     // find the actual wrapped context menu by the "wrapped-context-menu" ref
                     cm = cm.$refs["wrapped-context-menu"];
 
@@ -56,9 +55,8 @@ function bindContextMenu(element, binding, vNode) {
                     // save the [element: listener, cm] triplet (the listeners are attached at the <context-menu-item> component's level, see its source)
                     BoundContextMenus.set(vNode.elm, { listener: null, cm });
 
-                    // tell the <context-menu-item> component that it opens a nested context menu
+                    // tell the item instance that it's a caller-item and opens the found context menu as nested
                     vNode.componentInstance.calls = cm;
-                    vNode.componentInstance.callsNull = false;
                 } else { // v-context-menu is used on any other element (either an HTML element or a component)
                      // open the context menu if the alt key was not holded during the right-click
                     let listener = (event) => {
@@ -112,12 +110,12 @@ export default {
             let oldCm = unbindContextMenu(element);
             let newCm = bindContextMenu(element, binding, vNode);
 
-            // if the old context menu is opened and it's opened for this element
+            // if the old context menu is opened and it's opened for the same target the update hook has triggered for
             if (oldCm && oldCm.show && oldCm.event.target === element) {
                 // then close it
                 oldCm.immediateClose();
 
-                // and open the new one using the old one's data if it it's not disabled
+                // and open the new one using the old one's data if it's not disabled
                 if (newCm) {
                     if (oldCm.isRoot) {
                         newCm.immediateOpen(oldCm.event);
@@ -132,7 +130,7 @@ export default {
     unbind(element) {
         let cm = unbindContextMenu(element);
 
-        // close the unbound context menu if there was one (1), if it's opened right now (2) and if it's not opened for another target (3)
+        // close the unbound context menu if it's not null, it's opened and it's opened for the same target the unbind hook has triggered for
         if (cm && cm.show && cm.event.target === element) {
             cm.immediateClose();
         }

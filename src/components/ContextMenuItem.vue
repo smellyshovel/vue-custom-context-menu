@@ -127,6 +127,9 @@ export default {
                 }
             // if a not-a-caller item is pressed
             } else {
+                // don't do anything if the native context menu was requested
+                if (event.which === 3 && event.altKey) return;
+
                 // perform the item's action
                 this.action(this.cm.target, this.cm);
 

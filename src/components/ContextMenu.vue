@@ -275,15 +275,13 @@ export default {
             this.style.left += "px";
             this.style.top += "px";
 
-            this.$nextTick(() => {
-                if (parseFloat(this.style.top) < 0) {
-                    this.style.top = "0px";
+            if (parseFloat(this.style.top) < 0) {
+                this.style.top = "0px";
 
-                    if (cmHeight > viewportHeight) {
-                        this.style.height = viewportHeight + "px";
-                    }
+                if (cmHeight > viewportHeight) {
+                    this.style.height = viewportHeight + "px";
                 }
-            });
+            }
         }
     }
 }

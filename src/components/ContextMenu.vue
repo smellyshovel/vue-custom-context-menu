@@ -12,16 +12,13 @@
     <div
         ref="wrapper"
         class="context-menu-wrapper"
-        :class="{ root: isRoot }"
+        :class="{ root: isRoot, nested: !isRoot }"
         :style="style"
 
         @mouseenter="preventCollapsing"
         @mousedown.stop
     >
-        <div
-            ref="cm"
-            class="context-menu"
-        >
+        <div class="context-menu">
             <slot></slot>
         </div>
     </div>
@@ -36,8 +33,6 @@ export default {
         ContextMenuOverlay
     },
     // TODO close on esc
-    // TODO test height change with dynamic items
-    // TODO ALREADY CHECKED transpose on v-context-menu's value change - works!
 
     props: {
         penetrable: {
@@ -72,7 +67,7 @@ export default {
                         }
 
                         return root;
-                    })()
+                    })();
             }
         },
 
@@ -96,7 +91,7 @@ export default {
             show: false,
 
             event: undefined, // set on open; don't reset because is might be used even after the context menu closed
-            caller: undefined, // set on open; stores the context menu item that opened this (nested) context menu
+            caller: undefined, // set on open; don't reset; stores the context menu item that opened this (nested) context menu
 
             isRoot: true, // the context menu is root if it's not nested
             zIndex: 100000, // incremented on open so nested context menus always spawn above each other
@@ -104,11 +99,11 @@ export default {
             style: {
                 left: 0,
                 top: 0,
-                height: "auto" // TODO check if it's possible to set this in CSS
+                height: "auto"
             },
 
             parent: null, // only set for nested context menus
-            sub: null, // only set for parents; stores the nested context menu's instance
+            sub: null, // only set for parents; stores the nested context menu instance
 
             openTimer: null,
             closeTimer: null
@@ -170,6 +165,10 @@ export default {
         // the logics of context menu closing
         abstractClose() {
             if (this.show) {
+                if (this.parent) {
+                    this.parent.sub = null;
+                }
+
                 if (this.sub) {
                     this.sub.immediateClose();
                     this.sub = null;

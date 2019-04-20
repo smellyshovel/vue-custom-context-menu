@@ -27,6 +27,7 @@ function bindContextMenu(element, binding, vNode) {
             element.addEventListener("contextmenu", listener);
         }
 
+        // return the bound context menu (null in this case)
         return null;
     } else if (typeof binding.value === "string") { // e.g. v-context-menu="'sample'"
         // find the context menu with the ref="sample"
@@ -55,7 +56,7 @@ function bindContextMenu(element, binding, vNode) {
                     // save the [element: listener, cm] triplet (the listeners are attached at the <context-menu-item> component's level, see its source)
                     BoundContextMenus.set(vNode.elm, { listener: null, cm });
 
-                    // tell the item instance that it's a caller-item and opens the found context menu as nested
+                    // tell the item instance that it's a caller-item and opens the found context menu as a nested one
                     vNode.componentInstance.calls = cm;
                 } else { // v-context-menu is used on any other element (either an HTML element or a component)
                      // open the context menu if the alt key was not holded during the right-click
@@ -73,6 +74,7 @@ function bindContextMenu(element, binding, vNode) {
                     element.addEventListener("contextmenu", listener);
                 }
 
+                // return the bound context menu
                 return cm;
             } else { // the context menu is an HTML element rather than a component
                 throw new Error(`${ ERROR_PREFIX} | The 'v-context-menu' directive must point to either the 'ContextMenu' component or a 'ContextMenu' wrapper-component, but it points to a '${ cm.tagName }' HTML element`);
@@ -104,24 +106,20 @@ export default {
     },
 
     update(element, binding, vNode) {
-        // trigger only in cases when v-context-menu directive's value has changed
+        // trigger only in cases when the v-context-menu directive's value is changed
         if (binding.oldValue !== binding.value) {
             // unbind the old context menu and bind the new one
             let oldCm = unbindContextMenu(element);
             let newCm = bindContextMenu(element, binding, vNode);
 
-            // if the old context menu is opened and it's opened for the same target the update hook has triggered for
+            // if the old context menu is opened and it's opened for the same target the update hook is triggered for
             if (oldCm && oldCm.show && oldCm.event.target === element) {
                 // then close it
                 oldCm.immediateClose();
 
-                // and open the new one using the old one's data if it's not disabled
+                // and open the new one if it's not disabled using the old one's data
                 if (newCm) {
-                    if (oldCm.isRoot) {
-                        newCm.immediateOpen(oldCm.event);
-                    } else {
-                        newCm.immediateOpen(oldCm.event, element, oldCm.parent);
-                    }
+                    newCm.immediateOpen(oldCm.event, oldCm.caller, oldCm.parent);
                 }
             }
         }
@@ -130,7 +128,7 @@ export default {
     unbind(element) {
         let cm = unbindContextMenu(element);
 
-        // close the unbound context menu if it's not null, it's opened and it's opened for the same target the unbind hook has triggered for
+        // close the unbound context menu if it's not null, it's opened and it's opened for the same target the unbind hook is triggered for
         if (cm && cm.show && cm.event.target === element) {
             cm.immediateClose();
         }

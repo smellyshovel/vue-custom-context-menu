@@ -1,7 +1,7 @@
 <template>
 <div
     class="context-menu-overlay"
-    :class="{ root: isRoot }"
+    :class="{ root: isRoot, nested: !isRoot }"
     :style="{ zIndex }"
 
     @mousedown="close($event)"
@@ -37,21 +37,26 @@ export default {
 
     methods: {
         close(event) {
-            // the next line doesn't allow to close the context menu if the native context menu was requested
+            // the next line doesn't allow to close the context menu if the native one was requested
             if (event.which === 3 && event.altKey) return;
+
+            // DRY
+            let close = () => {
+                this.$emit("close");
+                if (this.isRoot) document.documentElement.style.overflow = "";
+            };
 
             // if the overlay is penetrable then a new context menu will be opened because the mousedown event triggers first
             // else the overlay won't yet be closed when the contextmenu event takes place hence no other context menus will open
             if (this.penetrable) {
-                this.$emit("close");
+                close();
             } else {
                 event.stopPropagation();
 
                 setTimeout(() => {
-                    this.$emit("close");
+                    close();
                 }, 0);
             }
-
         }
     }
 }
@@ -66,10 +71,9 @@ export default {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    pointer-events: none;
 }
 
-.root {
-    pointer-events: initial;
+.nested {
+    pointer-events: none;
 }
 </style>

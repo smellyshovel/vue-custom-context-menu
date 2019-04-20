@@ -24,6 +24,22 @@ export default {
             default: false
         }
     },
+    
+    created() {
+        if (this.cm.show) {
+            this.$nextTick(() => {
+                this.cm.transpose();
+            });
+        }
+    },
+
+    beforeDestroy() {
+        if (this.cm.show) {
+            this.$nextTick(() => {
+                this.cm.transpose();
+            });
+        }
+    },
 
     data() {
         return {

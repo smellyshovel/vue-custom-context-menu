@@ -96,6 +96,7 @@ export default {
             show: false,
 
             event: undefined, // set on open; don't reset because is might be used even after the context menu closed
+            caller: undefined, // set on open; stores the context menu item that opened this (nested) context menu
 
             isRoot: true, // the context menu is root if it's not nested
             zIndex: 100000, // incremented on open so nested context menus always spawn above each other
@@ -122,6 +123,7 @@ export default {
 
             if (!this.show) {
                 this.event = event;
+                this.caller = caller;
 
                 if (parent) {
                     this.parent = parent;
@@ -132,22 +134,7 @@ export default {
                 }
 
                 this.show = true;
-
-                if (caller) {
-                    this.style.left = caller.getBoundingClientRect().right;
-                    this.style.top = caller.getBoundingClientRect().top;
-                } else {
-                    this.style.left = event.clientX;
-                    this.style.top = event.clientY;
-                }
-
-                this.style.left += "px";
-                this.style.top += "px";
-
-                // $nextTick is used because .transpose relies on the real elements' dimensions, and there're no elements yet at this point
-                this.$nextTick(() => {
-                    this.transpose(caller);
-                });
+                this.transpose();
 
                 this.openTimer = null;
                 this.$emit("opened", this);
@@ -238,50 +225,59 @@ export default {
         },
 
         // shifts and shrinks (when necessary) the context menu
-        transpose(caller) {
-            let viewportWidth = this.overlayElement.getBoundingClientRect().width;
-            let viewportHeight = this.overlayElement.getBoundingClientRect().height;
+        transpose() {
+            if (this.caller) {
+                this.style.left = `${ this.caller.getBoundingClientRect().right }px`;
+                this.style.top = `${ this.caller.getBoundingClientRect().top }px`;
+            } else {
+                this.style.left = `${ this.event.clientX }px`;
+                this.style.top = `${ this.event.clientY }px`;
+            }
 
-            let cmWidth = this.wrapperElement.getBoundingClientRect().width;
-            let cmHeight = this.wrapperElement.getBoundingClientRect().height;
+            this.style.height = "auto";
 
-            let furthestX = this.wrapperElement.getBoundingClientRect().right;
-            let furthestY = this.wrapperElement.getBoundingClientRect().bottom;
+            this.$nextTick(() => {
+                let viewportWidth = this.overlayElement.getBoundingClientRect().width;
+                let viewportHeight = this.overlayElement.getBoundingClientRect().height;
 
-            if (furthestX >= viewportWidth) {
-                if (this.shift === "x" || this.shift === "both") {
-                    if (caller) {
-                        this.style.left = caller.getBoundingClientRect().left - cmWidth;
+                let cmWidth = this.wrapperElement.getBoundingClientRect().width;
+                let cmHeight = this.wrapperElement.getBoundingClientRect().height;
+
+                let furthestX = this.wrapperElement.getBoundingClientRect().right;
+                let furthestY = this.wrapperElement.getBoundingClientRect().bottom;
+
+                if (furthestX > viewportWidth) {
+                    if (this.shift === "x" || this.shift === "both") {
+                        if (this.caller) {
+                            this.style.left = `${ this.caller.getBoundingClientRect().left - cmWidth }px`;
+                        } else {
+                            this.style.left = `${ parseFloat(this.style.left) - cmWidth }px`;
+                        }
                     } else {
-                        this.style.left = parseFloat(this.style.left) - cmWidth;
+                        this.style.left = `${ viewportWidth - cmWidth }px`;
                     }
-                } else {
-                    this.style.left = viewportWidth - cmWidth;
                 }
-            }
 
-            if (furthestY >= viewportHeight) {
-                if (this.shift === "y" || this.shift === "both") {
-                    if (caller) {
-                        this.style.top = caller.getBoundingClientRect().bottom - cmHeight;
+                if (furthestY > viewportHeight) {
+                    if (this.shift === "y" || this.shift === "both") {
+                        if (this.caller) {
+                            this.style.top = `${ this.caller.getBoundingClientRect().bottom - cmHeight }px`;
+                        } else {
+                            this.style.top = `${ parseFloat(this.style.top) - cmHeight }px`;
+                        }
                     } else {
-                        this.style.top = parseFloat(this.style.top) - cmHeight;
+                        this.style.top = `${ viewportHeight - cmHeight }px`;
                     }
-                } else {
-                    this.style.top = viewportHeight - cmHeight;
                 }
-            }
 
-            this.style.left += "px";
-            this.style.top += "px";
+                if (parseFloat(this.style.top) < 0) {
+                    this.style.top = "0px";
 
-            if (parseFloat(this.style.top) < 0) {
-                this.style.top = "0px";
-
-                if (cmHeight > viewportHeight) {
-                    this.style.height = viewportHeight + "px";
+                    if (cmHeight > viewportHeight) {
+                        this.style.height = `${ viewportHeight }px`;
+                    }
                 }
-            }
+            });
         }
     }
 }

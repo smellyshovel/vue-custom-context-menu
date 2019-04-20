@@ -24,7 +24,8 @@ export default {
             default: false
         }
     },
-    
+
+    // recalculate context menu's position and height when new items are added
     created() {
         if (this.cm.show) {
             this.$nextTick(() => {
@@ -33,6 +34,7 @@ export default {
         }
     },
 
+    // recalculate context menu's position and height when existeing items are removed
     beforeDestroy() {
         if (this.cm.show) {
             this.$nextTick(() => {
@@ -149,6 +151,7 @@ export default {
                 // perform the item's action
                 this.action(this.cm.target, this.cm);
 
+                // close the root context menu (thus closing all the nested as well)
                 this.cm.root.immediateClose();
             }
         }

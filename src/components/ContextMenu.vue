@@ -133,6 +133,7 @@ export default {
 
                 if (this.isRoot) {
                     document.documentElement.style.overflow = "hidden";
+                    document.addEventListener("keydown", this.closeOnEscKey);
                 }
 
                 this.openTimer = null;
@@ -180,6 +181,7 @@ export default {
 
                 if (this.isRoot) {
                     document.documentElement.style.overflow = "";
+                    document.removeEventListener("keydown", this.closeOnEscKey);
                 }
 
                 this.show = false;
@@ -214,6 +216,18 @@ export default {
             if (this.closeTimer) {
                 clearTimeout(this.closeTimer);
                 this.closeTimer = null;
+            }
+        },
+
+        // event listener callback that closes the most nested context menu among all the opened ones
+        closeOnEscKey(event) {
+            if (event.keyCode === 27) {
+                let nestedMost = this;
+                while (nestedMost.sub) {
+                    nestedMost = nestedMost.sub;
+                }
+
+                nestedMost.immediateClose();
             }
         },
 

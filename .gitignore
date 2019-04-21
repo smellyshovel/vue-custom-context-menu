@@ -2,6 +2,9 @@
 .DS_Store
 node_modules
 
+# Cypress
+cypress/screenshots
+
 # Local env files
 .env.local
 .env.*.local

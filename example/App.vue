@@ -11,75 +11,25 @@
     <p>Provident quam neque laborum possimus modi excepturi ipsa cumque odit repudiandae in. Non laboriosam, hic praesentium illo! Ex earum similique optio, debitis necessitatibus harum consectetur repudiandae, laboriosam praesentium, omnis ab!</p>
     <p>Tempora doloribus molestias, quam. Facilis iste distinctio suscipit quos incidunt libero beatae in dicta repudiandae, optio alias cumque iure dolores quibusdam eos adipisci officia tenetur ut deserunt ab cupiditate expedita.</p>
 
-    <context-menu ref="cm-inline-nested-gamma">
-        <context-menu-item>inline nested gamma 1</context-menu-item>
-        <context-menu-item>inline nested gamma 2</context-menu-item>
-        <context-menu-item>inline nested gamma 3</context-menu-item>
-        <context-menu-item>inline nested gamma 4</context-menu-item>
-        <context-menu-item>inline nested gamma 5</context-menu-item>
+    <div
+        class="target"
+        data-cy="null"
+        v-context-menu="null"
+    >
+        A target with <strong>v-context-menu="null"</strong>
+    </div>
+
+    <context-menu ref="test">
+        <div>test</div>
     </context-menu>
 
-    <context-menu ref="cm-inline-nested-alpha">
-        <context-menu-item v-context-menu="'cm-inline-nested-gamma'">inline nested alpha 1 (calls "cm-inline-nested-gamma")</context-menu-item>
-        <context-menu-item>inline nested alpha 2</context-menu-item>
-        <context-menu-item>inline nested alpha 3</context-menu-item>
-        <context-menu-item>inline nested alpha 4</context-menu-item>
-        <context-menu-item>inline nested alpha 5</context-menu-item>
-    </context-menu>
-
-    <context-menu ref="cm-inline-nested-beta">
-        <context-menu-item v-context-menu="'cm-inline-nested-gamma'">inline nested beta 1 (calls "cm-inline-nested-gamma")</context-menu-item>
-        <context-menu-item>inline nested beta 2</context-menu-item>
-        <context-menu-item>inline nested beta 3</context-menu-item>
-        <context-menu-item>inline nested beta 4</context-menu-item>
-        <context-menu-item>inline nested beta 5</context-menu-item>
-    </context-menu>
-
-    <context-menu ref="cm-inline-alpha">
-        <context-menu-item v-context-menu="'cm-inline-nested-alpha'">inline alpha 1 (calls "cm-inline-nested-alpha")</context-menu-item>
-        <context-menu-item v-context-menu="'cm-inline-nested-beta'">inline alpha 2 (calls "cm-inline-nested-beta")</context-menu-item>
-        <context-menu-item>inline alpha 3</context-menu-item>
-        <context-menu-item>inline alpha 4</context-menu-item>
-        <context-menu-item>inline alpha 5</context-menu-item>
-    </context-menu>
-
-    <context-menu ref="cm-inline-beta">
-        <context-menu-item>inline beta 1</context-menu-item>
-        <context-menu-item>inline beta 2</context-menu-item>
-        <context-menu-item>inline beta 3</context-menu-item>
-        <context-menu-item>inline beta 4</context-menu-item>
-        <context-menu-item>inline beta 5</context-menu-item>
-    </context-menu>
-
-    <cm-wrapped-alpha ref="cm-wrapped-alpha" />
-    <cm-wrapped-beta ref="cm-wrapped-beta" />
-
-    <div class="target" v-context-menu="null">disabled</div>
-
-    <div class="target" v-context-menu="'cm-inline-alpha'">inline "cm-inline-alpha" (1st target)</div>
-    <div class="target" v-context-menu="'cm-inline-alpha'">inline "cm-inline-alpha" (2nd target)</div>
-
-    <div class="target" v-context-menu="'cm-inline-beta'">inline "cm-inline-beta" (1st target)</div>
-    <div class="target" v-context-menu="'cm-inline-beta'">inline "cm-inline-beta" (2nd target)</div>
-
-    <div class="target" v-context-menu="'cm-wrapped-alpha'">wrapped "cm-wrapped-alpha" (1st target)</div>
-    <div class="target" v-context-menu="'cm-wrapped-alpha'">wrapped "cm-wrapped-alpha" (2nd target)</div>
-
-    <div class="target" v-context-menu="'cm-wrapped-beta'">wrapped "cm-wrapped-beta" (1st target)</div>
-    <div class="target" v-context-menu="'cm-wrapped-beta'">wrapped "cm-wrapped-beta" (2nd target)</div>
-
-    <div class="target" v-context-menu="dynamicValue1"><strong>toggles</strong> from "cm-inline-alpha" to "cm-inline-beta" [5 second delay]</div>
-    <div class="target" v-context-menu="dynamicValue2"><strong>toggles</strong> from "cm-inline-alpha" to "cm-wrapped-alpha" [5 second delay]</div>
-    <div class="target" v-context-menu="dynamicValue3"><strong>toggles</strong> from "cm-wrapped-alpha" to "cm-wrapped-beta" [5 second delay]</div>
-    <div class="target" v-context-menu="dynamicValue4"><strong>toggles</strong> from "cm-wrapped-alpha" to "cm-inline-alpha" [5 second delay]</div>
-    <div class="target" v-context-menu="dynamicValue5"><strong>toggles</strong> from disabled to "cm-inline-alpha" [5 second delay]</div>
-    <div class="target" v-context-menu="dynamicValue6"><strong>toggles</strong> from disabled to "cm-wrapped-alpha" [5 second delay]</div>
-    <div class="target" v-context-menu="dynamicValue7"><strong>toggles</strong> from "cm-inline-alpha" to disabled [5 second delay]</div>
-    <div class="target" v-context-menu="dynamicValue8"><strong>toggles</strong> from "cm-wrapped-alpha" to disabled [5 second delay]</div>
-
-    <div class="target" v-if="visible" v-context-menu="null"><strong>disappears</strong> disabled [5 second delay]</div>
-    <div class="target" v-if="visible" v-context-menu="'cm-inline-alpha'"><strong>disappears</strong> "cm-inline-alpha" [5 second delay]</div>
-    <div class="target" v-if="visible" v-context-menu="'cm-wrapped-alpha'"><strong>disappears</strong> "cm-wrapped-alpha" [5 second delay]</div>
+    <div
+        class="target"
+        data-cy="test"
+        v-context-menu="'test'"
+    >
+        A target with v-context-menu
+    </div>
 
     <p>Perferendis veritatis temporibus omnis quidem porro, commodi molestiae, labore voluptate nulla. Est, aliquid rerum dolorem corporis quibusdam perspiciatis tempore nulla commodi nobis, quae repellendus! Quaerat corrupti quod explicabo atque ex.</p>
     <p>Aspernatur ipsam atque voluptatem non quae iste nesciunt enim quo quaerat quasi totam, obcaecati itaque autem dignissimos modi, sapiente dolorem. Doloribus ipsum tempore magnam error autem sed quisquam maxime veritatis!</p>
@@ -95,11 +45,13 @@
 </template>
 
 <script>
+import UsualComp from "./components/UsualComponent.vue";
 import CmWrappedAlpha from "./components/ContextMenuWrappedAlpha.vue";
 import CmWrappedBeta from "./components/ContextMenuWrappedBeta.vue";
 
 export default {
     components: {
+        UsualComp,
         CmWrappedAlpha,
         CmWrappedBeta
     },
@@ -107,6 +59,7 @@ export default {
     data() {
         return {
             visible: true,
+            disabled: false,
             dynamicValue1: "cm-inline-alpha",
             dynamicValue2: "cm-inline-alpha",
             dynamicValue3: "cm-wrapped-alpha",
@@ -114,13 +67,17 @@ export default {
             dynamicValue5: null,
             dynamicValue6: null,
             dynamicValue7: "cm-inline-alpha",
-            dynamicValue8: "cm-wrapped-alpha"
+            dynamicValue8: "cm-wrapped-alpha",
+            dynamicValueNested1: "cm-inline-nested-alpha",
+            dynamicValueNested2: "cm-inline-nested-alpha",
+            dynamicValueNested3: null
         }
     },
 
     mounted() {
         setTimeout(() => {
             this.visible = false;
+            this.disabled = true;
 
             this.dynamicValue1 = "cm-inline-beta";
             this.dynamicValue2 = "cm-wrapped-alpha";
@@ -130,6 +87,9 @@ export default {
             this.dynamicValue6 = "cm-wrapped-alpha";
             this.dynamicValue7 = null;
             this.dynamicValue8 = null;
+            this.dynamicValueNested1 = "cm-inline-nested-beta";
+            this.dynamicValueNested2 = null;
+            this.dynamicValueNested3 = "cm-inline-nested-beta";
         }, 5000);
     }
 }
@@ -142,12 +102,33 @@ export default {
     border: 1px solid black;
 }
 
-/deep/ .context-menu-overlay {
+/deep/ .context-menu-overlay.root {
     background-color: rgba(0, 0, 0, 0.25);
 }
 
 /deep/ .context-menu {
+    width: 200px; /* always provide */
     background-color: black;
     color: white;
+    border: 1px solid white;
+}
+
+/deep/ .context-menu-item {
+    margin: 0.5rem;
+}
+
+/deep/ .context-menu-item:hover {
+    background-color: blue;
+}
+
+
+/deep/ .context-menu-item.disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+/deep/ .context-menu-item.disabled:hover {
+    background-color: gray;
+    cursor: not-allowed;
 }
 </style>

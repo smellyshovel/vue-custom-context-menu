@@ -1,6 +1,8 @@
 # No need in all these files to be shipped to the end user
+cypress/
 src/
+example/
 .babelrc
-.browserslistrc
 rollup.config.js
+cypress.json
 CONTRIBUTING.md

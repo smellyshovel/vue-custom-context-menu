@@ -131,6 +131,10 @@ export default {
                 this.show = true;
                 this.transpose();
 
+                if (this.isRoot) {
+                    document.documentElement.style.overflow = "hidden";
+                }
+
                 this.openTimer = null;
                 this.$emit("opened", this);
             }
@@ -172,6 +176,10 @@ export default {
                 if (this.sub) {
                     this.sub.immediateClose();
                     this.sub = null;
+                }
+
+                if (this.isRoot) {
+                    document.documentElement.style.overflow = "";
                 }
 
                 this.show = false;

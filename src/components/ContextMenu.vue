@@ -32,7 +32,6 @@ export default {
     components: {
         ContextMenuOverlay
     },
-    // TODO close on esc
 
     props: {
         penetrable: {
@@ -143,11 +142,8 @@ export default {
 
         // public; opens the context menu immediately
         immediateOpen(event, caller, parent) {
-            // setTimeout helps to avoid some subtle bugs by allowing other actions to complete first
-            setTimeout(() => {
-                this.cancelDelayedOpen();
-                this.abstractOpen(event, caller, parent);
-            }, 0);
+            this.cancelDelayedOpen();
+            this.abstractOpen(event, caller, parent);
         },
 
         // public; opens the context menu after some time (defined by the parent's delay prop); is used exclusively to open nested context menus
@@ -195,11 +191,8 @@ export default {
 
         // public; closes the context menu (and its nested ones) immediately
         immediateClose() {
-            // setTimeout helps to avoid some subtle bugs by allowing other actions to complete first
-            setTimeout(() => {
-                this.cancelDelayedClose();
-                this.abstractClose();
-            }, 0);
+            this.cancelDelayedClose();
+            this.abstractClose();
         },
 
         // public; closes the context menu (and its nested ones) after some time (defined by the parent's delay prop); is used exclusively to close nested context menus

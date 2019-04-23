@@ -68,7 +68,11 @@ export default {
         isDisabled(newValue) {
             if (newValue === true && this.isCaller) {
                 this.calls.cancelDelayedOpen();
-                this.calls.immediateClose();
+
+                // setTimeout helps to avoid some subtle bugs by allowing other actions to complete first
+                setTimeout(() => {
+                    this.calls.immediateClose();
+                }, 0);
             }
         },
 

@@ -26,7 +26,7 @@ describe("The v-context-menu directive basic behavior", function() {
             .trigger("contextmenu")
             .wait(10);
 
-        cy.get(".context-menu");
+        cy.contains(".context-menu", "cm-alpha");
     });
 
     it(`v-context-menu="'cm-alpha'" opens the "cm-alpha" context menu`, function() {
@@ -34,7 +34,7 @@ describe("The v-context-menu directive basic behavior", function() {
             .trigger("contextmenu")
             .wait(10);
 
-        cy.get(".context-menu");
+        cy.contains(".context-menu", "cm-alpha");
     });
 
     it(`v-context-menu="'cm-alpha'" also affects children`, function() {
@@ -42,7 +42,7 @@ describe("The v-context-menu directive basic behavior", function() {
             .trigger("contextmenu")
             .wait(10);
 
-        cy.get(".context-menu");
+        cy.contains(".context-menu", "cm-alpha");
     });
 
     it(`v-context-menu="'cm-alpha'" can be overwritten with "null"`, function() {
@@ -59,6 +59,6 @@ describe("The v-context-menu directive basic behavior", function() {
             .trigger("contextmenu")
             .wait(10);
 
-        cy.get(".context-menu");
+        cy.contains(".context-menu", "cm-beta");
     });
 });

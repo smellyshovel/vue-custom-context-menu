@@ -2,7 +2,7 @@
 .circleci/
 cypress/
 src/
-example/
+examples/
 .babelrc
 rollup.config.js
 cypress.json

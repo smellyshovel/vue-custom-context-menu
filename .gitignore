@@ -4,6 +4,7 @@ node_modules
 
 # Cypress
 cypress/screenshots
+cypress/videos
 
 # Local env files
 .env.local

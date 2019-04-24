@@ -1,9 +1,8 @@
 # No need in all these files to be shipped to the end user
 .circleci/
-cypress/
+tests/
 src/
 examples/
 .babelrc
 rollup.config.js
-cypress.json
 CONTRIBUTING.md

@@ -40,11 +40,12 @@
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.4.3",
     "babel-loader": "^8.0.5",
+    "chromedriver": "^73.0.0",
     "connect-history-api-fallback": "^1.6.0",
     "css-loader": "^2.1.1",
-    "cypress": "^3.2.0",
     "express": "^4.16.4",
     "html-webpack-plugin": "^3.2.0",
+    "nightwatch": "^1.0.19",
     "rollup": "^1.9.3",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-babel-minify": "^8.0.0",
@@ -57,5 +58,6 @@
     "webpack": "^4.29.6",
     "webpack-dev-middleware": "^3.6.2",
     "webpack-hot-middleware": "^2.24.3"
-  }
+  },
+  "dependencies": {}
 }

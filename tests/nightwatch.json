@@ -1,0 +1,19 @@
+{
+  "src_folders": ["tests/specs"],
+  "output_folder": "tests/reports",
+  "test_workers": true,
+
+  "webdriver" : {
+    "start_process": true,
+    "server_path": "node_modules/.bin/chromedriver",
+    "port": 9515
+  },
+
+  "test_settings" : {
+    "default" : {
+      "desiredCapabilities": {
+        "browserName": "chrome"
+      }
+    }
+  }
+}

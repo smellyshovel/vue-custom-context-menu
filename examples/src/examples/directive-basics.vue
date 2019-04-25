@@ -7,29 +7,19 @@
     </context-menu>
 
     <div
-        class="target"
-        data-cy="cm-null"
-        v-context-menu="null"
-    >
-        A target with <strong>v-context-menu="null"</strong>
-    </div>
-
-    <div
-        class="target"
+        class="target cm-null"
         v-context-menu="null"
     >
         A target with <strong>v-context-menu="null"</strong>
 
         <div
-            class="target"
-            data-cy="cm-null-child-none"
+            class="target cm-null-child-none"
         >
             A child target <strong>without</strong> v-context-menu</strong>
         </div>
 
         <div
-            class="target"
-            data-cy="cm-null-child-cm-alpha"
+            class="target cm-null-child-cm-alpha"
             v-context-menu="'cm-alpha'"
         >
             A child target with <strong>v-context-menu="'cm-alpha'"</strong>
@@ -37,29 +27,19 @@
     </div>
 
     <div
-        class="target"
-        data-cy="cm-alpha"
-        v-context-menu="'cm-alpha'"
-    >
-        A target with <strong>v-context-menu="'cm-alpha'"</strong>
-    </div>
-
-    <div
-        class="target"
+        class="target cm-alpha"
         v-context-menu="'cm-alpha'"
     >
         A target with <strong>v-context-menu="'cm-alpha'"</strong>
 
         <div
-            class="target"
-            data-cy="cm-alpha-child-none"
+            class="target cm-alpha-child-none"
         >
             A child target <strong>without</strong> v-context-menu</strong>
         </div>
 
         <div
-            class="target"
-            data-cy="cm-alpha-child-cm-null"
+            class="target cm-alpha-child-cm-null"
             v-context-menu="null"
         >
             A child target with <strong>v-context-menu="null"</strong></strong>
@@ -70,8 +50,7 @@
         </context-menu>
 
         <div
-            class="target"
-            data-cy="cm-alpha-child-cm-beta"
+            class="target cm-alpha-child-cm-beta"
             v-context-menu="'cm-beta'"
         >
             A child target with <strong>v-context-menu="'cm-beta'"</strong></strong>

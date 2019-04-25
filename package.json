@@ -12,7 +12,8 @@
     "build:unpkg": "rollup --config rollup.config.js --format umd --file dist/vue-custom-context-menu.min.js --environment MINIFY",
     "watch:umd": "rollup --watch --config rollup.config.js --format umd --file dist/vue-custom-context-menu.umd.js",
     "watch:esm": "rollup --watch --config rollup.config.js --format es --file dist/vue-custom-context-menu.esm.js",
-    "dev": "node examples/server.js"
+    "dev": "node examples/server.js",
+    "test": "nightwatch --config tests/nightwatch.json"
   },
   "repository": {
     "type": "git",

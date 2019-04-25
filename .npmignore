@@ -1,5 +1,4 @@
 # No need in all these files to be shipped to the end user
-.circleci/
 tests/
 src/
 examples/

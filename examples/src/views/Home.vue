@@ -3,9 +3,8 @@
     <h1>Examples index</h1>
 
     <ul>
-        <li>
-            <router-link to="/directive-basics">Directive basics</router-link>
-        </li>
+        <li><a href="/directive-basics">Directive basics</a></li>
+        <li><a href="/penetrable-option">Penetrable option</a></li>
     </ul>
 </div>
 </template>

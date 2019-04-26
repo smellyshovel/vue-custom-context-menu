@@ -1,4 +1,6 @@
 module.exports = {
+    "@tags": ["directive", "directive-basics"],
+
     beforeEach(browser) {
         browser.url('http://localhost:8080/directive-basics');
     },

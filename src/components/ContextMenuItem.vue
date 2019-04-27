@@ -155,8 +155,10 @@ export default {
                 // perform the item's action
                 this.action(this.cm.target, this.cm);
 
-                // close the root context menu (thus closing all the nested as well)
-                this.cm.root.immediateClose();
+                // close the root context menu (thus closing all the nested as well) (setTimeout is used so that the contextmenu event is triggered when the context menu isn't closed yet)
+                setTimeout(() => {
+                    this.cm.root.immediateClose();
+                }, 0);
             }
         }
     }

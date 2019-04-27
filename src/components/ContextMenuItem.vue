@@ -25,23 +25,24 @@ export default {
         }
     },
 
-    // recalculate context menu's position and height when new items are added
-    created() {
-        if (this.cm.show) {
-            this.$nextTick(() => {
-                this.cm.transpose();
-            });
-        }
-    },
-
-    // recalculate context menu's position and height when existeing items are removed
-    beforeDestroy() {
-        if (this.cm.show) {
-            this.$nextTick(() => {
-                this.cm.transpose();
-            });
-        }
-    },
+    // The following piece of code leads to a bug with positioning of overflowed context menus. TODO reconsider
+    // // recalculate context menu's position and height when new items are added
+    // created() {
+    //     if (this.cm.show) {
+    //         this.$nextTick(() => {
+    //             this.cm.transpose();
+    //         });
+    //     }
+    // },
+    //
+    // // recalculate context menu's position and height when existeing items are removed
+    // beforeDestroy() {
+    //     if (this.cm.show) {
+    //         this.$nextTick(() => {
+    //             this.cm.transpose();
+    //         });
+    //     }
+    // },
 
     data() {
         return {

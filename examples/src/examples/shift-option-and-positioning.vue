@@ -19,7 +19,7 @@
                 <code>shift="y"</code> is opposite to "x". Only transposes the context menu by the y-axis and <code>fit</code>s it horizontally
             </li>
             <li>
-                <code>shift="both"</code> acts in both axes. The context menu's bottom right corner will be at the point the right-click happened
+                <code>shift="both"</code> acts in both axes. The context menu's bottom right corner will be at the point where the right-click happened
             </li>
         </ul>
 
@@ -29,7 +29,7 @@
         right. And so on.
 
         The context-menu height is also treated automatically. If the context menu appers to overflow the viewport then it will be
-        shrinked down and occupy only the avaialable amount of space. Check out the last test-field.
+        shrinked down and occupy only the avaialable amount of space. Add 40+ items (depends on your screen characteristics) in the test-field below.
 
         The following placeholder-text is added to stress out that the context menu position is relative to the viewport and not influenced by the scrolling.
 
@@ -116,7 +116,8 @@
         class="field"
         v-context-menu="'cm-main'"
     >
-        Open a context menu with <strong>{{ rootItemsNumber }} items</strong> and <strong>shift="{{ rootShift }}"</strong>
+        Open a context menu with <strong>{{ rootItemsNumber }} items</strong> and <strong>shift="{{ rootShift }}"</strong>.
+        The nested context menu's caller is the last item, so you might want to scroll down the root context menu in order to reach it.
     </div>
 
     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab, dolore, mollitia. Totam eos omnis cupiditate ab labore laudantium magnam itaque velit tempora, suscipit, voluptates in distinctio ducimus, quos eligendi provident.</p>

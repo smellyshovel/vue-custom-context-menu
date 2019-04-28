@@ -9,6 +9,8 @@
         <li><a href="/penetrable-option">Penetrable option</a></li>
         <li><a href="/shift-option-and-positioning">Shift option and positioning</a></li>
         <li><a href="/wrapped-declarations">Wrapped declarations</a></li>
+        <li><a href="/callbacks">Callbacks</a></li>
+        <li><a href="/directive-dynamics">Directive dynamics</a></li>
     </ul>
 </div>
 </template>

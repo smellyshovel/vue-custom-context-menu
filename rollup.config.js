@@ -1,3 +1,4 @@
+import CommonJsPlugin from "rollup-plugin-commonjs";
 import VuePlugin from "rollup-plugin-vue";
 import BabelPlugin from "rollup-plugin-babel";
 import BabelMinifyPlugin from 'rollup-plugin-babel-minify';
@@ -10,6 +11,7 @@ export default {
     },
 
     plugins: [
+        CommonJsPlugin(),
         VuePlugin({
             css: true,
             compileTemplate: true,

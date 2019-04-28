@@ -2,7 +2,9 @@
 .DS_Store
 node_modules
 
-tests/reports
+# tests
+test/reports
+chromedriver.log
 
 # Local env files
 .env.local

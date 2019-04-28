@@ -1,6 +1,6 @@
 {
-  "src_folders": ["tests/specs/"],
-  "output_folder": "tests/reports",
+  "src_folders": ["test/specs/"],
+  "output_folder": "test/reports",
 
   "webdriver" : {
     "start_process": true,

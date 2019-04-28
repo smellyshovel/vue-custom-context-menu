@@ -1,7 +1,7 @@
 {
   "name": "vue-custom-context-menu",
   "version": "2.0.3",
-  "description": "A Vue.js plugin that allows you to build 🖱 Context Menus for your app fast 🚀 and simple 🧩. Supports 🗂 nested Context Menus! Allows for full 🛠 customisation!",
+  "description": "🖱 A Vue.js plugin for building Custom Context Menus. Supports nested context menus. Automatically adjusts position",
   "main": "dist/vue-custom-context-menu.umd.js",
   "module": "dist/vue-custom-context-menu.esm.js",
   "unpkg": "dist/vue-custom-context-menu.min.js",
@@ -10,10 +10,8 @@
     "build:umd": "rollup --config rollup.config.js --format umd --file dist/vue-custom-context-menu.umd.js",
     "build:esm": "rollup --config rollup.config.js --format es --file dist/vue-custom-context-menu.esm.js",
     "build:unpkg": "rollup --config rollup.config.js --format umd --file dist/vue-custom-context-menu.min.js --environment MINIFY",
-    "watch:umd": "rollup --watch --config rollup.config.js --format umd --file dist/vue-custom-context-menu.umd.js",
-    "watch:esm": "rollup --watch --config rollup.config.js --format es --file dist/vue-custom-context-menu.esm.js",
     "dev": "node examples/server.js",
-    "test": "nightwatch --config tests/nightwatch.json"
+    "test": "nightwatch --config test/nightwatch.json"
   },
   "repository": {
     "type": "git",
@@ -21,11 +19,17 @@
   },
   "keywords": [
     "vue",
+    "vue2",
+    "vuejs",
+    "vue.js",
     "UI",
     "context",
     "menu",
+    "context-menu",
+    "contextmenu",
     "right",
-    "click"
+    "click",
+    "right-click"
   ],
   "author": "Matthew Mamonov <g.smellyshovel@gmail.com>",
   "license": "MIT",
@@ -50,6 +54,7 @@
     "rollup": "^1.9.3",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-babel-minify": "^8.0.0",
+    "rollup-plugin-commonjs": "^9.3.4",
     "rollup-plugin-vue": "^4.7.2",
     "vue": "^2.6.10",
     "vue-loader": "^15.7.0",

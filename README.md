@@ -190,32 +190,7 @@ You can disable an item by providing it the `disabled` prop
 
 ## Nested Context Menus
 
-There's no special syntax for definig nested Context Menus. Any Context Menu might be used as a nested one. All you have to do is just to add the `v-context-menu` directive to a `<context-menu-item>`. A `<context-menu-item>` with the `v-context-menu` directive bound to it is called a *caller* because it *calls* a nested context menu
-
-> You can wrap callers with HTML elements
-
-```html
-<!-- OK -->
-
-<context-menu>
-    <div class="block">
-        <context-menu-item v-context-menu="'cm-with-other-options'">Other</context-menu-item>
-    </div>
-</context-menu>
-```
-
-> But **don't** use callers as slots for other components!
-
-```html
-<!-- this won't work -->
-
-<context-menu>
-    <!-- <base-block> is not an HTML element -->
-    <base-block>
-        <context-menu-item v-context-menu="'cm-with-other-options'">Other</context-menu-item>
-    </base-block>
-</context-menu>
-```
+There's no special syntax for definig nested Context Menus. Any Context Menu might be used as a nested one. All you have to do is just to add the `v-context-menu` directive to a `<context-menu-item>`. A `<context-menu-item>` with the `v-context-menu` directive bound to it is called a *caller* (because it is used to *call* a nested Context Menu)
 
 ```html
 <context-menu-item v-context-menu="'cm-with-downloading-options'">Download</context-menu-item>
@@ -243,6 +218,31 @@ Wrapped Context Menus' items can also open nested Context Menus
 > The `action` prop is ignored for Context Menu items with `v-context-menu`
 
 `v-context-menu="null"` on a `<context-menu-item>` acts the same as the `disabled` option.
+
+> You can wrap callers with HTML elements
+
+```html
+<!-- OK -->
+
+<context-menu>
+    <div class="block">
+        <context-menu-item v-context-menu="'cm-with-other-options'">Other</context-menu-item>
+    </div>
+</context-menu>
+```
+
+> But **don't** use callers as slots for other components!
+
+```html
+<!-- this won't work -->
+
+<context-menu>
+    <!-- <base-block> is not an HTML element -->
+    <base-block>
+        <context-menu-item v-context-menu="'cm-with-other-options'">Other</context-menu-item>
+    </base-block>
+</context-menu>
+```
 
 
 ### Options

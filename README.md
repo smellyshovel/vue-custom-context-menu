@@ -35,8 +35,6 @@ Or alternatively you can include it in the page as a separate `<script>`
 
 ## Usage
 
-### `<context-menu>` & `v-context-menu`
-
 Define Context Menus using the globally-available `<context-menu>` component. Bind the defined Context Menus to target elements/components using the `v-context-menu` directive
 
 ```html
@@ -70,9 +68,9 @@ Define Context Menus using the globally-available `<context-menu>` component. Bi
 </template>
 ```
 
-> Though the `<context-menu>` component can be located anywhere in the temaplte it's better to always define Context Menus at the top-most level (just like the "cm-for-base-header" is defined). Notice also that the `v-context-menu` is a directive, and directives accept an expression rather than a string, so the additional pair of signle quotes is necessary.
+> Though the `<context-menu>` component can be located anywhere in the template it's better to always define Context Menus at the top-most level (just like the "cm-for-base-header" is defined). Notice also that the `v-context-menu` is a directive, and directives accept an expression rather than a string, so the additional pair of signle quotes is necessary.
 
-You can also wrap a Context Menu in a separate component so that you can reuse it between different targets located in separate `<temaplte>`s
+You can also wrap a Context Menu in a separate component so that you can reuse it between different targets located in separate `<template>`s
 
 ```html
 <!-- ListItemTypeOne.vue -->
@@ -117,7 +115,7 @@ You can also wrap a Context Menu in a separate component so that you can reuse i
 </template>
 ```
 
-> Note that in this case you have to provide the `ref="wrapped-context-menu"` to the wrapped Context Menu
+> Note that in this case you'll have to provide the `ref="wrapped-context-menu"` to the wrapped Context Menu
 
 You can also completely disable all the Context Menus (including the browser's native one) for a specific element by providing it with `v-context-menu="null"`
 
@@ -130,7 +128,36 @@ You can also completely disable all the Context Menus (including the browser's n
 </div>
 ```
 
-> You can **always** request the native Context Menu if you hold the <kbd>Alt</kbd> key during the right-click
+> You can **always** request the native Context Menu for any element rendered by the plugin if you hold the <kbd>Alt</kbd> key during the right-click
+
+`v-context-menu` also affects the children of the target it's bound to. Thus in the following example the Context Menu won't only be disabled for the `<p>` element, but also for all the `<div>` ones
+
+```html
+<p v-context-menu="null">
+    <div>
+        ...
+
+        <div>
+            ...
+        </div>
+    </div>
+</p>
+```
+
+It's still possible however to overwrite the Context Menu for a specific child (and all of its children as well)
+
+```html
+<p v-context-menu="null">
+    <div>
+        ...
+
+        <div v-context-menu="'cm-alpha'">
+            Now both this element
+            <span>And this element open the "cm-alpha" when right-clicked</span>
+        </div>
+    </div>
+</p>
+```
 
 ### `<context-menu-item>`
 
@@ -150,32 +177,6 @@ Context Menu items are defined using the `<context-menu-item>` component
 </context-menu>
 ```
 
-> You can wrap `<context-menu-item>`s inside HTML elements
-
-```html
-<!-- OK -->
-
-<context-menu>
-    <div class="block">
-        <context-menu-item>Move</context-menu-item>
-        <context-menu-item>Copy</context-menu-item>
-    </div>
-</context-menu>
-```
-
-> But **don't** use `<context-menu-item>`s as slots for other components!
-
-```html
-<!-- this won't work -->
-
-<context-menu>
-    <base-block>
-        <context-menu-item>Move</context-menu-item>
-        <context-menu-item>Copy</context-menu-item>
-    </base-block>
-</context-menu>
-```
-
 You can disable an item by providing it the `disabled` prop
 
 ```html
@@ -189,7 +190,32 @@ You can disable an item by providing it the `disabled` prop
 
 ## Nested Context Menus
 
-There's no special syntax for definig nested Context Menus. Any Context Menu might be used as a nested one. All you have to do is just to add the `v-context-menu` directive to a `<context-menu-item>`
+There's no special syntax for definig nested Context Menus. Any Context Menu might be used as a nested one. All you have to do is just to add the `v-context-menu` directive to a `<context-menu-item>`. A `<context-menu-item>` with the `v-context-menu` directive bound to it is called a *caller* because it *calls* a nested context menu
+
+> You can wrap callers with HTML elements
+
+```html
+<!-- OK -->
+
+<context-menu>
+    <div class="block">
+        <context-menu-item v-context-menu="'cm-with-other-options'">Other</context-menu-item>
+    </div>
+</context-menu>
+```
+
+> But **don't** use callers as slots for other components!
+
+```html
+<!-- this won't work -->
+
+<context-menu>
+    <!-- <base-block> is not an HTML element -->
+    <base-block>
+        <context-menu-item v-context-menu="'cm-with-other-options'">Other</context-menu-item>
+    </base-block>
+</context-menu>
+```
 
 ```html
 <context-menu-item v-context-menu="'cm-with-downloading-options'">Download</context-menu-item>

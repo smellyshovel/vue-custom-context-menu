@@ -1,12 +1,12 @@
 # Vue Custom Context Menu
 
-A Vue.js plugin that allows you to build 🖱 Context Menus for your app fast 🚀 and simple 🧩. Supports 🗂 nested Context Menus! Allows for full 🛠 customisation!
+A Vue.js plugin for building custom 🖱 Context Menus. Automatically adjusts position and supports nested context menus out of the box
 
 ## Installation
 
 1. Install the NPM package
     ```shell
-    $ npm install vue-custom-context-menu --save
+    $ npm install --save vue-custom-context-menu
     ```
 
 1. Import it in your app's main file the preferred way
@@ -26,7 +26,7 @@ A Vue.js plugin that allows you to build 🖱 Context Menus for your app fast �
     Vue.use(VCCM)
     ```
 
-Or you can also include it on the page as a separate `<script>`
+Or alternatively you can include it in the page as a separate `<script>`
 ```html
 <script src="https://unpkg.com/vue-custom-context-menu"></script>
 ```
@@ -35,97 +35,324 @@ Or you can also include it on the page as a separate `<script>`
 
 ## Usage
 
-**Bind** Context Menus to elements and components using the `v-context-menu` directive. **Disable** Context Menus for a specific element via the `.disabled` modifier (which also affects all of its children if not otherwise specified for a specific child (and thus its children as well). Provide the `.no-native` modifier to to show a custom Context Menu instead of the **browser's native** one even if the `[alt]` key was holded during the opening
+### `<context-menu>` & `v-context-menu`
+
+Define Context Menus using the globally-available `<context-menu>` component. Bind the defined Context Menus to target elements/components using the `v-context-menu` directive
 
 ```html
-<div id="wrapper" v-context-menu.disabled>
-    <custom-header v-context-menu.no-native="'#cm-for-custom-header'"></custom-header>
+<template>
+<div class="wrapper">
 
-    <main>
-        <ol>
-            <file-item is="li"
-                v-for="file in files"
-                :key="file.id"
-                :links="{plain: file.links.plain, zipped: file.links.zipped}"
+    <context-menu ref="cm-for-base-header">
+        <!-- we'll discuss later on what to insert here -->
+    </context-menu>
 
-                v-context-menu="'[data-cm-for-files]'"
+    <base-header v-context-menu="'cm-for-base-header'">
+        This is the BaseHeader component...
+    </base-header>
 
-            >{{ file.name }}</file-item>
-        </ol>
-    </main>
+    <ul>
+
+        <!-- <context-menu> can be located anywhere in the template -->
+        <context-menu ref="cm-for-list-item"></context-menu>
+
+        <li
+            v-for="item in items"
+            :key="item.id"
+            v-context-menu="'cm-for-list-item'"
+        >
+            {{ item.name }}
+        </li>
+    </ul>
+
+    ...
 </div>
+</template>
 ```
 
-**Define** the `<context-menu>`s inside the `<vccm-overlay>` component on the app instance's level. **Customise** behavior by passing props. Use the `<cm-item>` component to define Context Menus' items passing the `action` prop to specify the **action** to be performed or use the familiar `v-context-menu` directive to open another Context Menu as a **nested** one when the item is selected
+> Though the `<context-menu>` component can be located anywhere in the temaplte it's better to always define Context Menus at the top-most level (just like the "cm-for-base-header" is defined). Notice also that the `v-context-menu` is a directive, and directives accept an expression rather than a string, so the additional pair of signle quotes is necessary.
+
+You can also wrap a Context Menu in a separate component so that you can reuse it between different targets located in separate `<temaplte>`s
 
 ```html
-<div id="app">
-    <!-- ... -->
-
-    <vccm-overlay
-        transition="fade"
-        :penetrable="true">
-
-        <context-menu
-            id="#cm-for-custom-header"
-            transition="fade"
-            shift="both">
-
-            <cm-item :action="addButtonToHeader">Add fast-access button</cm-item>
-
-            <div class=".cm-separator"></div>
-
-            <cm-item :action="closeHeader">
-                <div>Close</div>
-                <div class="hint">You can reopen it at any time by pressing [Ctrl]+[H]</div>
-            </cm-item>
-        </context-menu>
-
-        <context-menu
-            data-cm-for-files
-            :delay="500"
-            @closed="(target) => target.tempHighlight()">
-
-            <cm-item :action="openFile">Open</cm-item>
-            <cm-item v-context-menu="'#cm-for-download-options'">Download</cm-item>
-
-            <div class=".cm-separator"></div>
-
-            <cm-item :action="cutFile">Cut</cm-item>
-            <cm-item :action="copyFile">Copy</cm-item>
-            <cm-item :action="renameFile">Rename</cm-item>
-            <cm-item :action="deleteFile">Delete</cm-item>
-        </context-menu>
-
-        <context-menu
-            id="#cm-for-download-options"
-            @opened="checkServersLoad">
-
-            <cm-item :action="(target) => download(target.links.plain)">As it is</cm-item>
-            <cm-item :action="(target) => download(target.links.zipped)">Zip-compressed</cm-item>
-        </context-menu>
-    </vccm-overlay>
-</div>
-```
-
-You can also bring the `<vccm-overlay>` to another component that must be included on the app instance's level with `ref="vccm-context-menus"` to keep your code nice and clean
-
-```html
-<!-- App.vue -->
-
-<div id="app">
-    <arbitrary-named-component-for-context-menus ref="vccm-context-menus"></arbitrary-named-component-for-context-menus>
-</div>
-```
-
-```html
-<!-- ArbitraryNamedComponentForContextMenus.vue -->
+<!-- ListItemTypeOne.vue -->
 
 <template>
-    <vccm-overlay>
-        <!-- ... -->
-    </vccm-overlay>
+<div class="wrapper">
+    <cm-for-list-item-wrapper ref="cm-for-list-item" />
+
+    <li
+        class="one"
+        v-context-menu="'cm-for-list-item'"
+    >
+        <slot />
+    </li>
+</div>
 </template>
+```
+
+```html
+<!-- ListItemTypeTwo.vue -->
+
+<template>
+<div class="wrapper">
+    <cm-for-list-item-wrapper ref="cm-for-list-item" />
+
+    <li
+        class="two"
+        v-context-menu="'cm-for-list-item'"
+    >
+        <slot />
+    </li>
+</div>
+</template>
+```
+
+```html
+<!-- CmForListItemWrapper.vue -->
+
+<template>
+    <context-menu ref="wrapped-context-menu">
+    </context-menu>
+</template>
+```
+
+> Note that in this case you have to provide the `ref="wrapped-context-menu"` to the wrapped Context Menu
+
+You can also completely disable all the Context Menus (including the browser's native one) for a specific element by providing it with `v-context-menu="null"`
+
+```html
+<div
+    class="target"
+    v-context-menu="null"
+>
+    No Context Menus for me :(
+</div>
+```
+
+> You can **always** request the native Context Menu if you hold the <kbd>Alt</kbd> key during the right-click
+
+### `<context-menu-item>`
+
+Context Menu items are defined using the `<context-menu-item>` component
+
+```html
+<context-menu ref="cm-for-list-item">
+    <context-menu-item :action="open">
+        <strong>Open</strong>
+    </context-menu-item>
+
+    <div>You can also use any other elements/components here</div>
+
+    <context-menu-item :action="close">
+        Close
+    </context-menu-item>
+</context-menu>
+```
+
+> You can wrap `<context-menu-item>`s inside HTML elements
+
+```html
+<!-- OK -->
+
+<context-menu>
+    <div class="block">
+        <context-menu-item>Move</context-menu-item>
+        <context-menu-item>Copy</context-menu-item>
+    </div>
+</context-menu>
+```
+
+> But **don't** use `<context-menu-item>`s as slots for other components!
+
+```html
+<!-- this won't work -->
+
+<context-menu>
+    <base-block>
+        <context-menu-item>Move</context-menu-item>
+        <context-menu-item>Copy</context-menu-item>
+    </base-block>
+</context-menu>
+```
+
+You can disable an item by providing it the `disabled` prop
+
+```html
+<context-menu-item
+    :action="open"
+    :disabled="!cantBeOpened"
+>
+    Open
+</context-menu-item>
+```
+
+## Nested Context Menus
+
+There's no special syntax for definig nested Context Menus. Any Context Menu might be used as a nested one. All you have to do is just to add the `v-context-menu` directive to a `<context-menu-item>`
+
+```html
+<context-menu-item v-context-menu="'cm-with-downloading-options'">Download</context-menu-item>
+```
+
+> The "cm-with-downloading-options" Context Menu can still be bound to some other element/component if needed. In fact, **any** Context Menu can be bound to multiple targets
+
+Wrapped Context Menus' items can also open nested Context Menus
+
+```html
+<!-- WrappedContextMenu.vue -->
+
+<template>
+    <context-menu ref="wrapped-context-menu">
+        <context-menu-item v-context-menu="'cm-with-downloading-options'">Download</context-menu-item>
+    </context-menu>
+
+    <context-menu ref="cm-with-downloading-options">
+        <context-menu-item :action="downloadPlain">Plain</context-menu-item>
+        <context-menu-item :action="downloadZip">As a Zip archive</context-menu-item>
+    </context-menu>
+</template>
+```
+
+> The `action` prop is ignored for Context Menu items with `v-context-menu`
+
+`v-context-menu="null"` on a `<context-menu-item>` acts the same as the `disabled` option.
+
+
+### Options
+
+You can control different aspects of a Context Menu with props. There're 3 props available for a `<context-menu>` component:
+
+1. `penetrable`  
+1. `shift`
+1. `delay`
+
+#### `penetrable`
+
+`false` by default. Accepts `Boolean` values.
+
+The `penetrable` option, as its name suggests, allows to define Context Menus with the penetrable overlay. It means that the user will be able to focus input fields, trigger `mouseup` events, immediately open Context Menus for other targets if he clicks (or right-clicks) the overlay when the Context Menu is opened.
+
+If a Context Menu is set to be impenetrable and the user clicks/right-clicks the overlay then the Context Menu will just close.
+
+```html
+<context-menu
+    ref="cm-for-folder-entry"
+    :penetrable="true"
+>
+    ...
+</context-menu>
+```
+
+#### `shift`
+
+`"x"` by default. Accepts `String` value, one of: `"fit"`, `"x"`, `"y"`, `"both"`.
+
+Unfortunately (or not) it's impossible for any HTML content to be rendered outside the browser window. It means that the custom Context Menus are restricted by the size of the viewport of the page. So when the user right-clicks somewhere near the bottom-right corner of the page...
+
+#### `delay`
+
+### Styling
+
+Each Context Menu internally consists of the overlay, the wrapper element, the Context Menu element itself and the Context Menu's slot-elements (`<context-menu-item>`s and other murkup)
+
+```html
+<div class="context-menu-overlay">
+    <div class="context-menu-wrapper">
+        <div class="context-menu">
+            <div class="context-menu-item"></div>
+        </div>
+    </div>
+</div>
+```
+
+You can style any of those elements as you prefer.
+
+A Context Menu might be opened either as a root one or as a nested one. The `.root` or `.nested` class is added respectively both to the `.context-menu-overlay` and the `.context-menu-wrapper`. So you style root and nested Context Menus separately
+
+```css
+.context-menu-overlay {
+    /* apply these styles for each overlay */
+}
+
+.context-menu-overlay.root {
+    /* these - only for overlays of the Context Menus that are opened NOT as nested ones */
+}
+
+.context-menu-overlay.root {
+    /* and these - only for overlays of the nested Context Menus */
+}
+
+/* and the same for wrapper-elements */
+.context-menu-wrapper {
+    /* ... */
+}
+
+.context-menu-wrapper.root {
+    /* ... */
+}
+
+.context-menu-wrapper.root {
+    /* ... */
+}
+```
+
+> Note that since nor `.context-menu-wrapper` nor `.context-menu` are explicitly exposed to your template, you might want to use the `/deep/` modifier for those
+
+```css
+/deep/ .context-menu-wrapper {}
+/deep/ .context-menu {}
+```
+
+Most of the time you won't want to style overlays. However, if you want/have to then it'd better if you only style the `.root` one since `.nested` ones are only here because of the restrictions imposed be Vue itself and don't carry almost any semantic load.
+
+#### Defaults
+
+These are the default styles that you typically don't want to overwrite in your CSS
+
+```css
+.context-menu-overlay {
+    position: fixed; /* position overlays relative to the viewport */
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%; /* occupy the full width/height of the vieport */
+    height: 100%;
+    overflow: hidden;
+    /* z-index - 100000 by default and is auto-incremented for each Context Menu opened as a nested one */
+}
+
+.context-menu-overlay.nested {
+    pointer-events: none; /* overlays for nested Context Menus can be clicked-through */
+}
+
+.context-menu-wrapper {
+    position: absolute; /* absolute relative to the viewport */
+    pointer-events: initial; /* so that items don't ignore mouse events */
+    /* height - is calculated and set automatically */
+}
+
+.context-menu {
+    box-sizing: border-box;
+    height: 100%;
+    overflow: auto; /* so that the context can be scrolled if the Context Menu is overflowed with items */
+}
+```
+
+#### Transitions
+
+You can wrap any Context Menu inside the `<transition>` component as you do with any other component. No restrictions here. However bear in mind that you can't say the same about `<context-menu-item>`s since those can't be wrapped inside other components
+
+```html
+<!-- OK -->
+<transition name="fade">
+    <context-menu>
+        <!-- most probably won't work -->
+        <transition name="bubble">
+            <context-menu-item></context-menu-item>
+        </transition>
+    </context-menu>
+</transition>
 ```
 
 *Refer [here](https://github.com/smellyshovel/vue-custom-context-menu/wiki/Usage) for more details on usage or [here](https://github.com/smellyshovel/vue-custom-context-menu/wiki/QnA) for the QnA*

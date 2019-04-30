@@ -1,6 +1,6 @@
 {
   "name": "vue-custom-context-menu",
-  "version": "2.0.3",
+  "version": "3.0.0",
   "description": "A Vue.js plugin for building custom 🖱 Context Menus. Automatically adjusts position and supports nested Context Menus out of the box",
   "main": "dist/vue-custom-context-menu.umd.js",
   "module": "dist/vue-custom-context-menu.esm.js",

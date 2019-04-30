@@ -73,49 +73,78 @@ Define Context Menus using the globally-available `<context-menu>` component. Bi
 You can also wrap a Context Menu in a separate component so that you can reuse it between different targets located in separate `<template>`s
 
 ```html
-<!-- ListItemTypeOne.vue -->
+<!-- Header.vue -->
 
 <template>
 <div class="wrapper">
-    <cm-for-list-item-wrapper ref="cm-for-list-item" />
+    <cm-for-links ref="cm-for-link" />
 
-    <li
-        class="one"
-        v-context-menu="'cm-for-list-item'"
-    >
-        <slot />
-    </li>
+    <header>
+        <a
+            href="/pricing"
+            v-context-menu="'cm-for-links'"
+        >
+            Pricing
+        </a>
+
+        ...
+    </header>
 </div>
 </template>
+
+<script>
+import CmForLinks from "./CmForLinks.vue";
+
+export default {
+    components: {
+        CmForLinks
+    }
+}
+</script>
 ```
 
 ```html
-<!-- ListItemTypeTwo.vue -->
+<!-- Footer.vue -->
 
 <template>
 <div class="wrapper">
-    <cm-for-list-item-wrapper ref="cm-for-list-item" />
+    <cm-for-links ref="cm-for-link" />
 
-    <li
-        class="two"
-        v-context-menu="'cm-for-list-item'"
-    >
-        <slot />
-    </li>
+    <footer>
+        <router-link
+            :to="{ name: 'contacts' }"
+            v-context-menu="'cm-for-links'"
+        >
+            Contacts
+        </router-link>
+
+        ...
+    </header>
 </div>
 </template>
+
+<script>
+import CmForLinks from "./CmForLinks.vue";
+
+export default {
+    components: {
+        CmForLinks
+    }
+}
+</script>
 ```
 
 ```html
-<!-- CmForListItemWrapper.vue -->
+<!-- CmForLinks.vue -->
 
 <template>
     <context-menu ref="wrapped-context-menu">
+        <!-- we'll discuss later on what to insert here -->
     </context-menu>
 </template>
 ```
 
-> Note that in this case you'll have to provide the `ref="wrapped-context-menu"` to the wrapped Context Menu
+> Note that in such case you'd have to provide the `ref="wrapped-context-menu"` to the Context Menu that is wrapped inside a wrapper-component
 
 You can also completely disable all the Context Menus (including the browser's native one) for a specific element by providing it with `v-context-menu="null"`
 
@@ -153,11 +182,14 @@ It's still possible however to overwrite the Context Menu for a specific child (
 
         <div v-context-menu="'cm-alpha'">
             Now both this element
-            <span>And this element open the "cm-alpha" when right-clicked</span>
+            <span>and this element</span>
+            open the "cm-alpha" Context Menu when right-clicked
         </div>
     </div>
 </p>
 ```
+
+The above pattern can become quite useful if you want to globally disable the native Context Menu and at the same time provide custom ones for only certain elements/components.
 
 ### `<context-menu-item>`
 
@@ -198,6 +230,8 @@ There's no special syntax for definig nested Context Menus. Any Context Menu mig
 
 > The "cm-with-downloading-options" Context Menu can still be bound to some other element/component if needed. In fact, **any** Context Menu can be bound to multiple targets
 
+Now when the cursor enters the item a request to open the "cm-with-downloading-options" Context Menu is registered and the Context Menu will be opened after some time (controller by the `delay` option that we'll discuss a bit later). The nested Context Menu can also be opened if the item is clicked.
+
 Wrapped Context Menus' items can also open nested Context Menus
 
 ```html
@@ -215,7 +249,7 @@ Wrapped Context Menus' items can also open nested Context Menus
 </template>
 ```
 
-> The `action` prop is ignored for Context Menu items with `v-context-menu`
+> The `action` prop is ignored for callers
 
 `v-context-menu="null"` on a `<context-menu-item>` acts the same as the `disabled` option.
 

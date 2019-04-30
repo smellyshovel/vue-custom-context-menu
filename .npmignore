@@ -1,6 +1,0 @@
-# No need in all these files to be shipped to the end user
-src/
-.babelrc
-.browserslistrc
-rollup.config.js
-CONTRIBUTING.md

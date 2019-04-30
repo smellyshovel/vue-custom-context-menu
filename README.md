@@ -77,7 +77,7 @@ You can also wrap a Context Menu in a separate component so that you can reuse i
 
 <template>
 <div class="wrapper">
-    <cm-for-links ref="cm-for-link" />
+    <cm-for-links ref="cm-for-links" />
 
     <header>
         <a
@@ -108,7 +108,7 @@ export default {
 
 <template>
 <div class="wrapper">
-    <cm-for-links ref="cm-for-link" />
+    <cm-for-links ref="cm-for-links" />
 
     <footer>
         <router-link
@@ -157,7 +157,7 @@ You can also completely disable all the Context Menus (including the browser's n
 </div>
 ```
 
-> You can **always** request the native Context Menu for any element rendered by the plugin if you hold the <kbd>Alt</kbd> key during the right-click
+> You can **always** request the native Context Menu for any element if you hold the <kbd>Alt</kbd> key during the right-click
 
 `v-context-menu` also affects the children of the target it's bound to. Thus in the following example the Context Menu won't only be disabled for the `<p>` element, but also for all the `<div>` ones
 
@@ -178,10 +178,12 @@ It's still possible however to overwrite the Context Menu for a specific child (
 ```html
 <p v-context-menu="null">
     <div>
-        ...
+        Disabled for this div
+
+        <p>and this paragraph</p>
 
         <div v-context-menu="'cm-alpha'">
-            Now both this element
+            but both this element
             <span>and this element</span>
             open the "cm-alpha" Context Menu when right-clicked
         </div>

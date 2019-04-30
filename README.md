@@ -359,11 +359,57 @@ Example of usage
 
 #### `shift`
 
-`"x"` by default. Accepts `String` value, one of: `"fit"`, `"x"`, `"y"`, `"both"`.
+`"x"` by default. Accepts `String` values, one of: `"fit"`, `"x"`, `"y"`, `"both"`.
 
-Unfortunately (or not) it's impossible for any HTML content to be rendered outside the browser window. It means that the custom Context Menus are restricted by the size of the viewport of the page. So when the user right-clicks somewhere near the bottom-right corner of the page...
+Demo
+
+![Demo](.github/shift-option-demo.gif)
+
+Unfortunately (or not) it's impossible for any HTML content to be rendered outside the browser window. It means that the custom Context Menus are restricted by the size of the viewport of the page. So when the user right-clicks somewhere near the bottom-right corner of the page it may happen so that the opened Context Menu simply won't have enough space available. The problem is solved for you out of the box and in such cases Context Menus are automatically repositioned. You can control how exactly a certain Context Menu would be transposed with this option.
+
+`"fit"` means that the Context Menu will be rendered right at the very corner of the vireport.  
+`"x"` means that it will be flipped horizontally and `fit`ted vertically  
+`"y"` - flipped vertically and `fit`ted horizontally  
+`"both"` - flipped both vertically and horizontally
+
+> For *nested* Context Menus it's usually better to use `"x"` or `"both"` for a better UX  
+
+Example of usage
+
+```html
+<context-menu
+    ref="cm-for-folder-entry"
+    shift="both"
+>
+    ...
+</context-menu>
+```
 
 #### `delay`
+
+`500` by default. Accepts `Number` values grater than 0.
+
+Demo (1 second for the first nested Context Menu and 2 seconds for the second one)
+
+![Demo](.github/delay-option-demo.gif)
+
+The option controls the amount of time (in ms) before a nested Context Menu is opened after the cursor entered its caller. It also sets the amount of time to pass before the nested Context Menu is closed after a request to close it has been registered.
+
+Note that the `delay` is set on a parent Context Menu (the one that contains callers) and affects all the nested Context Menus. It's impossible to set the `delay` for a particular Context Menu.
+
+Example of usage
+
+```html
+<context-menu
+    ref="cm-for-folder-entry"
+    :delay="2000"
+>
+    <context-menu-item v-context-menu="'cm-alpha'">Open "cm-alpha"</context-menu-item>
+    <context-menu-item v-context-menu="'cm-beta'">Open "cm-beta"</context-menu-item>
+</context-menu>
+```
+
+> Note that we use `:` so that Vue can understand that we pass a `Number` rather than a `String`
 
 ### Styling
 

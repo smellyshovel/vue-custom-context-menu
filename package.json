@@ -1,7 +1,7 @@
 {
   "name": "vue-custom-context-menu",
   "version": "2.0.3",
-  "description": "A Vue.js plugin for building custom 🖱 Context Menus. Automatically adjusts position and supports nested context menus out of the box",
+  "description": "A Vue.js plugin for building custom 🖱 Context Menus. Automatically adjusts position and supports nested Context Menus out of the box",
   "main": "dist/vue-custom-context-menu.umd.js",
   "module": "dist/vue-custom-context-menu.esm.js",
   "unpkg": "dist/vue-custom-context-menu.min.js",
@@ -37,9 +37,6 @@
     "url": "https://github.com/smellyshovel/vue-custom-context-menu/issues"
   },
   "homepage": "https://github.com/smellyshovel/vue-custom-context-menu#readme",
-  "peerDependencies": {
-    "vue": "^2.6.10"
-  },
   "devDependencies": {
     "@babel/core": "^7.4.3",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",

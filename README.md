@@ -211,6 +211,24 @@ The items for Context Menus are defined using the `<context-menu-item>` componen
 </context-menu>
 ```
 
+The `action` prop specifies the method performed when the item is clicked. The provided function is called with 2 arguments: the target element the Context Menu is opened for and the Context Menu instance
+
+```javascript
+export default {
+    methods: {
+        open(target, cm) {
+            console.log(target, cm);
+            // other actions...
+        },
+
+        close(target, cm) {
+            console.log(target, cm);
+            // other actions...
+        }
+    }
+}
+```
+
 You can disable an item by providing it the `disabled` prop
 
 ```html
@@ -221,6 +239,8 @@ You can disable an item by providing it the `disabled` prop
     Open
 </context-menu-item>
 ```
+
+When a disabled item is clicked, the provided action isn't fired and the Context Menu doesn't close.
 
 ### Nested Context Menus
 

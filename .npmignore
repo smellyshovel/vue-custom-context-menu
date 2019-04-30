@@ -1,0 +1,9 @@
+# No need in all these files to be shipped to the end user
+.github/
+test/
+src/
+examples/
+.babelrc
+rollup.config.js
+CONTRIBUTING.md
+chromedriver.log

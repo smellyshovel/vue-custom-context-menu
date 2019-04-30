@@ -1,0 +1,66 @@
+{
+  "name": "vue-custom-context-menu",
+  "version": "3.0.0",
+  "description": "A Vue.js plugin for building custom 🖱 Context Menus. Automatically adjusts position and supports nested Context Menus out of the box",
+  "main": "dist/vue-custom-context-menu.umd.js",
+  "module": "dist/vue-custom-context-menu.esm.js",
+  "unpkg": "dist/vue-custom-context-menu.min.js",
+  "scripts": {
+    "build": "npm run build:umd && npm run build:esm && npm run build:unpkg",
+    "build:umd": "rollup --config rollup.config.js --format umd --file dist/vue-custom-context-menu.umd.js",
+    "build:esm": "rollup --config rollup.config.js --format es --file dist/vue-custom-context-menu.esm.js",
+    "build:unpkg": "rollup --config rollup.config.js --format umd --file dist/vue-custom-context-menu.min.js --environment MINIFY",
+    "dev": "node examples/server.js",
+    "test": "nightwatch --config test/nightwatch.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smellyshovel/vue-custom-context-menu.git"
+  },
+  "keywords": [
+    "vue",
+    "vue2",
+    "vuejs",
+    "vue.js",
+    "UI",
+    "context",
+    "menu",
+    "context-menu",
+    "contextmenu",
+    "right",
+    "click",
+    "right-click"
+  ],
+  "author": "Matthew Mamonov <g.smellyshovel@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/smellyshovel/vue-custom-context-menu/issues"
+  },
+  "homepage": "https://github.com/smellyshovel/vue-custom-context-menu#readme",
+  "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "^7.4.3",
+    "babel-loader": "^8.0.5",
+    "chromedriver": "^73.0.0",
+    "connect-history-api-fallback": "^1.6.0",
+    "css-loader": "^2.1.1",
+    "express": "^4.16.4",
+    "html-webpack-plugin": "^3.2.0",
+    "nightwatch": "^1.0.19",
+    "rollup": "^1.9.3",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-babel-minify": "^8.0.0",
+    "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-vue": "^4.7.2",
+    "vue": "^2.6.10",
+    "vue-loader": "^15.7.0",
+    "vue-router": "^3.0.6",
+    "vue-style-loader": "^4.1.2",
+    "vue-template-compiler": "^2.6.10",
+    "webpack": "^4.29.6",
+    "webpack-dev-middleware": "^3.6.2",
+    "webpack-hot-middleware": "^2.24.3"
+  },
+  "dependencies": {}
+}

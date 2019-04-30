@@ -1,6 +1,6 @@
 # Vue Custom Context Menu
 
-A Vue.js plugin for building custom 🖱 Context Menus. Automatically adjusts position and supports nested context menus out of the box
+A Vue.js plugin for building custom 🖱 Context Menus. Automatically adjusts position and supports nested Context Menus out of the box
 
 ## Installation
 
@@ -565,7 +565,9 @@ You can wrap any Context Menu inside the `<transition>` component as you do with
 
 ## Other
 
-The Context Menus' heights are treated automatically out of the box. It means that if your Context Menu has a helluva lot items (ot the items themselves are pretty huge) so that the Context Menu can't fit in the viewport, it's gonna be shrinked down automatically.
+The Context Menus' heights are treated automatically out of the box. It means that if your Context Menu has a helluva lot items (or the items themselves are pretty huge) so that the Context Menu can't fit in the viewport, it's gonna be shrinked down automatically.
+
+---
 
 Since `v-context-menu` is a directive, you can provide it a dynamic value
 
@@ -598,6 +600,8 @@ export default {
 
 In such cases when the value changes and the Context Menu is opened it would be automatically substituted with another one. If the new value is `null` then the already opened Context Menu would automatically close. The same applies for nested Context Menus as well.
 
+---
+
 Though it's possible to reactively add/remove items to/from opened Context Menus (e.g. `<context-menu-item v-for="item in items">{{ item }}</context-menu-item>`) such actions won't trigger position/height updates. That is because of the restrictions imposed by Vue and it seems like we can do nothing with it. So it'd be better if you stick to the Context Menu substitution pattern described above. However if it's not an option you can always call the public `cm.transpose()` method manually which should update (recalculate) the Context Menu's position and height
 
 ```javascript
@@ -616,6 +620,8 @@ watch: {
     }
 }
 ```
+
+---
 
 The `<context-menu>` component emits `@opened` and `@closed` events when it's opened or closed respectively. The callback function is called with the Context Menu instance as the first (and the only) argument
 

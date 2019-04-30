@@ -1,4 +1,5 @@
 # No need in all these files to be shipped to the end user
+.github/
 test/
 src/
 examples/

@@ -31,8 +31,6 @@ Or alternatively you can include it in the page as a separate `<script>`
 <script src="https://unpkg.com/vue-custom-context-menu"></script>
 ```
 
-*Refer [here](https://github.com/smellyshovel/vue-custom-context-menu/wiki/Installation) for more details on installation*
-
 ## Usage
 
 Define Context Menus using the globally-available `<context-menu>` component. Bind the defined Context Menus to target elements/components using the `v-context-menu` directive
@@ -191,7 +189,7 @@ It's still possible however to overwrite the Context Menu for a specific child (
 </p>
 ```
 
-The above pattern can become quite useful if you want to globally disable the native Context Menu and at the same time provide custom ones for only certain elements/components.
+The above pattern can become quite useful if you want to globally disable the native Context Menus for the entire app and at the same time provide custom ones for only certain elements/components.
 
 ### `<context-menu-item>`
 
@@ -395,7 +393,7 @@ Demo (1 second for the first nested Context Menu and 2 seconds for the second on
 
 The option controls the amount of time (in ms) before a nested Context Menu is opened after the cursor entered its caller. It also sets the amount of time to pass before the nested Context Menu is closed after a request to close it has been registered.
 
-Note that the `delay` is set on a parent Context Menu (the one that contains callers) and affects all the nested Context Menus. It's impossible to set the `delay` for a particular Context Menu.
+Note that the `delay` is set on a parent Context Menu (the one that contains callers) and affects *all* the nested Context Menus at once. It's impossible to set the `delay` for a particular Context Menu exclusively.
 
 Example of usage
 
@@ -427,7 +425,7 @@ Each Context Menu internally consists of the overlay, the wrapper element, the C
 
 You can style any of those elements as you prefer.
 
-A Context Menu might be opened either as a root one or as a nested one. The `.root` or `.nested` class is added respectively both to the `.context-menu-overlay` and the `.context-menu-wrapper` so that you style root and nested Context Menus separately
+A Context Menu might be opened either as a root one or as a nested one. The `.root` or `.nested` class is added respectively both to the `.context-menu-overlay` and the `.context-menu-wrapper` so that you can style root and nested Context Menus separately
 
 ```css
 .context-menu-overlay {
@@ -500,6 +498,8 @@ Disabled items have the `.disabled` class
 }
 ```
 
+> Callers that call `null` (i.e. `<context-menu-item v-context-menu="null" />`-elements) are also considired to be disabled, hence the `.disabled` class is added to those as well
+
 Adding custom classes to Context Menus allows you to style different Context Menus differently. Bear in mind however that the class would only be added to the overlay, so you'd have to use nested selectors to style certain Context Menus
 
 ```html
@@ -557,13 +557,11 @@ You can wrap any Context Menu inside the `<transition>` component as you do with
     <context-menu>
         <!-- most probably won't work -->
         <transition name="bubble">
-            <context-menu-item></context-menu-item>
+            <context-menu-item v-context-menu="'cm-for-user-photo'"></context-menu-item>
         </transition>
     </context-menu>
 </transition>
 ```
-
-*Refer [here](https://github.com/smellyshovel/vue-custom-context-menu/wiki/Usage) for more details on usage or [here](https://github.com/smellyshovel/vue-custom-context-menu/wiki/QnA) for the QnA*
 
 ## Contribution
 

@@ -195,7 +195,7 @@ The above pattern can become quite useful if you want to globally disable the na
 
 ### `<context-menu-item>`
 
-Context Menu items are defined using the `<context-menu-item>` component
+The items for Context Menus are defined using the `<context-menu-item>` component
 
 ```html
 <context-menu ref="cm-for-list-item">
@@ -222,17 +222,15 @@ You can disable an item by providing it the `disabled` prop
 </context-menu-item>
 ```
 
-## Nested Context Menus
+### Nested Context Menus
 
-There's no special syntax for definig nested Context Menus. Any Context Menu might be used as a nested one. All you have to do is just to add the `v-context-menu` directive to a `<context-menu-item>`. A `<context-menu-item>` with the `v-context-menu` directive bound to it is called a *caller* (because it is used to *call* a nested Context Menu)
+There's no special syntax for definig nested Context Menus. Any Context Menu might be opened as a nested one. All you have to do is just to add the `v-context-menu` directive to a `<context-menu-item>`. A `<context-menu-item>` with the `v-context-menu` directive bound to it is called a *caller* (because it is used to *call* a nested Context Menu)
 
 ```html
 <context-menu-item v-context-menu="'cm-with-downloading-options'">Download</context-menu-item>
 ```
 
-> The "cm-with-downloading-options" Context Menu can still be bound to some other element/component if needed. In fact, **any** Context Menu can be bound to multiple targets
-
-Now when the cursor enters the item a request to open the "cm-with-downloading-options" Context Menu is registered and the Context Menu will be opened after some time (controller by the `delay` option that we'll discuss a bit later). The nested Context Menu can also be opened if the item is clicked.
+Now when the cursor enters the item a request to open the "cm-with-downloading-options" Context Menu is registered and the Context Menu will be opened after some time (controller by the `delay` option that we'll discuss a bit later). The nested Context Menu can also be opened immediately if the item is clicked.
 
 Wrapped Context Menus' items can also open nested Context Menus
 
@@ -240,6 +238,7 @@ Wrapped Context Menus' items can also open nested Context Menus
 <!-- WrappedContextMenu.vue -->
 
 <template>
+<div class="wrapper">
     <context-menu ref="wrapped-context-menu">
         <context-menu-item v-context-menu="'cm-with-downloading-options'">Download</context-menu-item>
     </context-menu>
@@ -248,38 +247,64 @@ Wrapped Context Menus' items can also open nested Context Menus
         <context-menu-item :action="downloadPlain">Plain</context-menu-item>
         <context-menu-item :action="downloadZip">As a Zip archive</context-menu-item>
     </context-menu>
+</div>
 </template>
 ```
 
-> The `action` prop is ignored for callers
+> Note however that the "cm-with-downloading-options" Context Menu wouldn't normally be available anywhere outside this wrapper-component
 
-`v-context-menu="null"` on a `<context-menu-item>` acts the same as the `disabled` option.
-
-> You can wrap callers with HTML elements
+The `action` prop is ignored for callers
 
 ```html
-<!-- OK -->
+<context-menu-item
+    :action="neverPerformed"
+    v-context-menu="'cm-with-downloading-options'"
+>
+    Download
+</context-menu-item>
+```
+
+`v-context-menu="null"` when used on the `<context-menu-item>` component acts the same as the `disabled` option
+
+```html
+<!-- all the following items are considered disabled -->
+
+<context-menu-item disabled>Item 1</context-menu-item>
+<context-menu-item v-context-menu="null">Item 2</context-menu-item>
+<context-menu-item disabled v-context-menu="null">Item 3</context-menu-item>
+```
+
+Regular Context Menu items can be wrapped both with HTML elements and components
+
+```html
+<!-- both are OK -->
 
 <context-menu>
     <div class="block">
-        <context-menu-item v-context-menu="'cm-with-other-options'">Other</context-menu-item>
+        <context-menu-item :action="delete">Delete</context-menu-item>
     </div>
-</context-menu>
-```
 
-> But **don't** use callers as slots for other components!
-
-```html
-<!-- this won't work -->
-
-<context-menu>
-    <!-- <base-block> is not an HTML element -->
     <base-block>
-        <context-menu-item v-context-menu="'cm-with-other-options'">Other</context-menu-item>
+        <context-menu-item :action="showInfo">Info</context-menu-item>
     </base-block>
 </context-menu>
 ```
 
+But bear in mind that the same **won't work** if you use **callers as slots for other components**!
+
+```html
+<context-menu>
+    <!-- this one is OK (since <div> is a HTML element) -->
+    <div class="block">
+        <context-menu-item v-context-menu="'cm-for-other-options'">Other</context-menu-item>
+    </div>
+
+    <!-- but the following one won't work (because <base-block> is a component) -->
+    <base-block>
+        <context-menu-item v-context-menu="'cm-for-other-options'">Other</context-menu-item>
+    </base-block>
+</context-menu>
+```
 
 ### Options
 

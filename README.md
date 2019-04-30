@@ -427,7 +427,7 @@ Each Context Menu internally consists of the overlay, the wrapper element, the C
 
 You can style any of those elements as you prefer.
 
-A Context Menu might be opened either as a root one or as a nested one. The `.root` or `.nested` class is added respectively both to the `.context-menu-overlay` and the `.context-menu-wrapper`. So you style root and nested Context Menus separately
+A Context Menu might be opened either as a root one or as a nested one. The `.root` or `.nested` class is added respectively both to the `.context-menu-overlay` and the `.context-menu-wrapper` so that you style root and nested Context Menus separately
 
 ```css
 .context-menu-overlay {
@@ -463,11 +463,60 @@ A Context Menu might be opened either as a root one or as a nested one. The `.ro
 /deep/ .context-menu {}
 ```
 
-Most of the time you won't want to style overlays. However, if you want/have to then it'd better if you only style the `.root` one since `.nested` ones are only here because of the restrictions imposed be Vue itself and don't carry almost any semantic load.
+Most of the time you won't want to style overlays (these are invisible by default). However, if you want/have to, then it'd better if you only style the `.root` one since `.nested` ones are only here because of the restrictions imposed be Vue itself and don't carry almost any semantic load.
+
+**Important! Always provide the `width` property for you custom Context Menus. They may render incorrect in some cases if you don't!**
+
+```css
+/deep/ .context-menu {
+    width: 200px; /* or 10%, or 10vw, or 200ch - anything */
+}
+
+/* or */
+
+/deep/ .context-menu-wrapper {
+    width: 200px;
+}
+
+/deep/ .context-menu {
+    width: 100%;
+}
+```
+
+Callers have the `.caller` class added to them
+
+```css
+.context-menu-item.caller {
+    background-color: red; /* make all the callers red */
+}
+```
+
+Disabled items have the `.disabled` class
+
+```css
+.context-menu-item.disabled {
+    background-color: gray; /* disabled items are gray */
+    cursor: not-allowed; /* and the cursor looks like a stroke-through red circle */
+}
+```
+
+Adding custom classes to Context Menus allows you to style different Context Menus differently. Bear in mind however that the class would only be added to the overlay, so you'd have to use nested selectors to style certain Context Menus
+
+```html
+<context-menu class="flat">
+    ...
+</context-menu>
+
+<style>
+/* /deep/ */ .context-menu-overlay.flat .context-menu {
+    /* ... */
+}
+</style>
+```
 
 #### Defaults
 
-These are the default styles that you typically don't want to overwrite in your CSS
+These are the default styles that you typically don't want to overwrite with your CSS
 
 ```css
 .context-menu-overlay {
@@ -500,7 +549,7 @@ These are the default styles that you typically don't want to overwrite in your 
 
 #### Transitions
 
-You can wrap any Context Menu inside the `<transition>` component as you do with any other component. No restrictions here. However bear in mind that you can't say the same about `<context-menu-item>`s since those can't be wrapped inside other components
+You can wrap any Context Menu inside the `<transition>` component as you do with any other components. No restrictions here. However bear in mind that you can't say the same about caller-items since those can't be wrapped inside other components (see above)
 
 ```html
 <!-- OK -->

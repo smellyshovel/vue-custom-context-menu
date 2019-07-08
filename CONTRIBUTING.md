@@ -20,6 +20,6 @@ Nowadays the workflow would be something like the follows
 1. `$ npm run build`
 1. Commit, push and start a pull request
 
-No need to update the NPM-package version, I'll do it myself (while the process isn't automated).
+No need to update the NPM-package version, I'll do it myself (since the process isn't automated yet).
 
 Don't be shy to submit a new issue if you have **any** questions!

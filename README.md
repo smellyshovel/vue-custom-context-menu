@@ -436,7 +436,7 @@ A Context Menu might be opened either as a root one or as a nested one. The `.ro
     /* these - only for overlays of the Context Menus that are opened NOT as nested ones */
 }
 
-.context-menu-overlay.root {
+.context-menu-overlay.nested {
     /* and these - only for overlays of the nested Context Menus */
 }
 
@@ -449,7 +449,7 @@ A Context Menu might be opened either as a root one or as a nested one. The `.ro
     /* ... */
 }
 
-.context-menu-wrapper.root {
+.context-menu-wrapper.nested {
     /* ... */
 }
 ```
@@ -481,7 +481,15 @@ Most of the time you won't want to style overlays (these are invisible by defaul
 }
 ```
 
-Callers have the `.caller` class added to them
+You can refer to all the `<context-menu-item>`s via the `.context-menu-item` class in you CSS
+
+```css
+.context-menu-item {
+    border: 1px solid #ccc;
+}
+```
+
+Callers (caller-items) have the `.caller` class added to them
 
 ```css
 .context-menu-item.caller {

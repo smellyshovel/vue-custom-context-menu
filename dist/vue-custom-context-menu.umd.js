@@ -1,10 +1,12 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.VCCM = factory());
-}(this, function () { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('vue')) :
+  typeof define === 'function' && define.amd ? define(['vue'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.VCCM = factory(global.vue));
+}(this, (function (vue) { 'use strict';
 
   function _typeof(obj) {
+    "@babel/helpers - typeof";
+
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
       _typeof = function (obj) {
         return typeof obj;
@@ -171,793 +173,573 @@
     }
   };
 
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  var script = {
-    props: {
-      isRoot: {
-        type: Boolean,
-        required: true
-      },
-      zIndex: {
-        type: Number,
-        required: true
-      },
-      penetrable: {
-        type: Boolean,
-        required: true
-      }
-    },
-    methods: {
-      close: function close(event) {
-        var _this = this;
-
-        // the next line doesn't allow to close the context menu if the native one was requested
-        if (event.which === 3 && event.altKey) return; // if the overlay is penetrable then a new context menu will be opened because the mousedown event triggers first
-        // else the overlay won't yet be closed when the contextmenu event takes place hence no other context menus will open
-
-        if (this.penetrable) {
-          this.$emit("close");
-        } else {
-          event.stopPropagation();
-          setTimeout(function () {
-            _this.$emit("close");
-          }, 0);
-        }
-      }
-    }
-  };
-
-  function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier
-  /* server only */
-  , shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
-    if (typeof shadowMode !== 'boolean') {
-      createInjectorSSR = createInjector;
-      createInjector = shadowMode;
-      shadowMode = false;
-    } // Vue.extend constructor export interop.
-
-
-    var options = typeof script === 'function' ? script.options : script; // render functions
-
-    if (template && template.render) {
-      options.render = template.render;
-      options.staticRenderFns = template.staticRenderFns;
-      options._compiled = true; // functional template
-
-      if (isFunctionalTemplate) {
-        options.functional = true;
-      }
-    } // scopedId
-
-
-    if (scopeId) {
-      options._scopeId = scopeId;
-    }
-
-    var hook;
-
-    if (moduleIdentifier) {
-      // server build
-      hook = function hook(context) {
-        // 2.3 injection
-        context = context || // cached call
-        this.$vnode && this.$vnode.ssrContext || // stateful
-        this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext; // functional
-        // 2.2 with runInNewContext: true
-
-        if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-          context = __VUE_SSR_CONTEXT__;
-        } // inject component styles
-
-
-        if (style) {
-          style.call(this, createInjectorSSR(context));
-        } // register component module identifier for async chunk inference
-
-
-        if (context && context._registeredComponents) {
-          context._registeredComponents.add(moduleIdentifier);
-        }
-      }; // used by ssr in case component is cached and beforeCreate
-      // never gets called
-
-
-      options._ssrRegister = hook;
-    } else if (style) {
-      hook = shadowMode ? function () {
-        style.call(this, createInjectorShadow(this.$root.$options.shadowRoot));
-      } : function (context) {
-        style.call(this, createInjector(context));
-      };
-    }
-
-    if (hook) {
-      if (options.functional) {
-        // register for functional component in vue file
-        var originalRender = options.render;
-
-        options.render = function renderWithStyleInjection(h, context) {
-          hook.call(context);
-          return originalRender(h, context);
-        };
-      } else {
-        // inject component registration as beforeCreate hook
-        var existing = options.beforeCreate;
-        options.beforeCreate = existing ? [].concat(existing, hook) : [hook];
-      }
-    }
-
-    return script;
-  }
-
-  var normalizeComponent_1 = normalizeComponent;
-
-  var isOldIE = typeof navigator !== 'undefined' && /msie [6-9]\\b/.test(navigator.userAgent.toLowerCase());
-  function createInjector(context) {
-    return function (id, style) {
-      return addStyle(id, style);
-    };
-  }
-  var HEAD = document.head || document.getElementsByTagName('head')[0];
-  var styles = {};
-
-  function addStyle(id, css) {
-    var group = isOldIE ? css.media || 'default' : id;
-    var style = styles[group] || (styles[group] = {
-      ids: new Set(),
-      styles: []
-    });
-
-    if (!style.ids.has(id)) {
-      style.ids.add(id);
-      var code = css.source;
-
-      if (css.map) {
-        // https://developer.chrome.com/devtools/docs/javascript-debugging
-        // this makes source maps inside style tags work properly in Chrome
-        code += '\n/*# sourceURL=' + css.map.sources[0] + ' */'; // http://stackoverflow.com/a/26603875
-
-        code += '\n/*# sourceMappingURL=data:application/json;base64,' + btoa(unescape(encodeURIComponent(JSON.stringify(css.map)))) + ' */';
-      }
-
-      if (!style.element) {
-        style.element = document.createElement('style');
-        style.element.type = 'text/css';
-        if (css.media) style.element.setAttribute('media', css.media);
-        HEAD.appendChild(style.element);
-      }
-
-      if ('styleSheet' in style.element) {
-        style.styles.push(code);
-        style.element.styleSheet.cssText = style.styles.filter(Boolean).join('\n');
-      } else {
-        var index = style.ids.size - 1;
-        var textNode = document.createTextNode(code);
-        var nodes = style.element.childNodes;
-        if (nodes[index]) style.element.removeChild(nodes[index]);
-        if (nodes.length) style.element.insertBefore(textNode, nodes[index]);else style.element.appendChild(textNode);
-      }
-    }
-  }
-
-  var browser = createInjector;
-
-  /* script */
-  const __vue_script__ = script;
-
-  /* template */
-  var __vue_render__ = function() {
-    var _vm = this;
-    var _h = _vm.$createElement;
-    var _c = _vm._self._c || _h;
-    return _c(
-      "div",
-      {
-        directives: [
-          {
-            name: "context-menu",
-            rawName: "v-context-menu",
-            value: null,
-            expression: "null"
-          }
-        ],
-        staticClass: "context-menu-overlay",
-        class: { root: _vm.isRoot, nested: !_vm.isRoot },
-        style: { zIndex: _vm.zIndex },
-        on: {
-          mousedown: function($event) {
-            return _vm.close($event)
-          }
-        }
-      },
-      [_vm._t("default")],
-      2
-    )
-  };
-  var __vue_staticRenderFns__ = [];
-  __vue_render__._withStripped = true;
-
-    /* style */
-    const __vue_inject_styles__ = function (inject) {
-      if (!inject) return
-      inject("data-v-a0a61860_0", { source: "\n.context-menu-overlay[data-v-a0a61860] {\n    position: fixed;\n    top: 0;\n    left: 0;\n    display: block;\n    width: 100%;\n    height: 100%;\n    overflow: hidden;\n}\n.nested[data-v-a0a61860] {\n    pointer-events: none;\n}\n", map: {"version":3,"sources":["/home/matt/projects/vue-custom-context-menu/src/components/ContextMenuOverlay.vue"],"names":[],"mappings":";AAsDA;IACA,eAAA;IACA,MAAA;IACA,OAAA;IACA,cAAA;IACA,WAAA;IACA,YAAA;IACA,gBAAA;AACA;AAEA;IACA,oBAAA;AACA","file":"ContextMenuOverlay.vue","sourcesContent":["<template>\n<div\n    class=\"context-menu-overlay\"\n    :class=\"{ root: isRoot, nested: !isRoot }\"\n    :style=\"{ zIndex }\"\n\n    @mousedown=\"close($event)\"\n    v-context-menu=\"null\"\n>\n    <slot></slot>\n</div>\n</template>\n\n<script>\nexport default {\n    props: {\n        isRoot: {\n            type: Boolean,\n            required: true\n        },\n\n        zIndex: {\n            type: Number,\n            required: true\n        },\n\n        penetrable: {\n            type: Boolean,\n            required: true\n        }\n    },\n\n    methods: {\n        close(event) {\n            // the next line doesn't allow to close the context menu if the native one was requested\n            if (event.which === 3 && event.altKey) return;\n\n            // if the overlay is penetrable then a new context menu will be opened because the mousedown event triggers first\n            // else the overlay won't yet be closed when the contextmenu event takes place hence no other context menus will open\n            if (this.penetrable) {\n                this.$emit(\"close\");\n            } else {\n                event.stopPropagation();\n\n                setTimeout(() => {\n                    this.$emit(\"close\");\n                }, 0);\n            }\n        }\n    }\n}\n</script>\n\n<style scoped>\n.context-menu-overlay {\n    position: fixed;\n    top: 0;\n    left: 0;\n    display: block;\n    width: 100%;\n    height: 100%;\n    overflow: hidden;\n}\n\n.nested {\n    pointer-events: none;\n}\n</style>\n"]}, media: undefined });
-
-    };
-    /* scoped */
-    const __vue_scope_id__ = "data-v-a0a61860";
-    /* module identifier */
-    const __vue_module_identifier__ = undefined;
-    /* functional template */
-    const __vue_is_functional_template__ = false;
-    /* style inject SSR */
-    
-
-    
-    var ContextMenuOverlay = normalizeComponent_1(
-      { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
-      __vue_inject_styles__,
-      __vue_script__,
-      __vue_scope_id__,
-      __vue_is_functional_template__,
-      __vue_module_identifier__,
-      browser,
-      undefined
-    );
-
-  //
-  var script$1 = {
-    components: {
-      ContextMenuOverlay: ContextMenuOverlay
-    },
-    props: {
-      penetrable: {
-        type: Boolean,
-        "default": false
-      },
-      shift: {
-        type: String,
-        "default": "x",
-        validator: function validator(value) {
-          return ["fit", "x", "y", "both"].includes(value);
-        }
-      },
-      delay: {
-        type: Number,
-        "default": 500,
-        validator: function validator(value) {
-          return value > 0;
-        }
-      }
-    },
-    computed: {
-      root: {
-        // the root context menu instance (the one that is all the nested ones' ancestor)
-        cache: false,
-        // must be recalculated each time because the same context menu may be opened either as a root or as a nested one
-        get: function get() {
-          var _this = this;
-
-          return this.isRoot ? this : function () {
-            var parent = _this;
-
-            while (parent) {
-              var root = parent;
-              parent = parent.parent;
-            }
-
-            return root;
-          }();
-        }
-      },
-      overlayElement: {
-        cache: false,
-        // no reactive data to rely on -> must be recalculated each time
-        get: function get() {
-          return this.$refs.overlay.$el;
-        }
-      },
-      wrapperElement: {
-        cache: false,
-        // no reactive data to rely on -> must be recalculated each time
-        get: function get() {
-          return this.$refs.wrapper;
-        }
-      }
-    },
-    data: function data() {
-      return {
-        show: false,
-        event: undefined,
-        // set on open; don't reset because is might be used even after the context menu closed
-        caller: undefined,
-        // set on open; don't reset; stores the context menu item that opened this (nested) context menu
-        isRoot: true,
-        // the context menu is root if it's not nested
-        zIndex: 100000,
-        // incremented on open so nested context menus always spawn above each other
-        style: {
-          left: 0,
-          top: 0,
-          height: "auto"
-        },
-        parent: null,
-        // only set for nested context menus
-        sub: null,
-        // only set for parents; stores the nested context menu instance
-        openTimer: null,
-        closeTimer: null
-      };
-    },
-    methods: {
-      // the logics of context menu opening
-      abstractOpen: function abstractOpen(event, caller, parent) {
-        // don't open a nested context menu if its parent is closed
-        if (parent && !parent.show) return;
-
-        if (!this.show) {
-          this.event = event;
-          this.caller = caller;
-
-          if (parent) {
-            this.parent = parent;
-            this.parent.sub = this;
-            this.isRoot = false;
-            this.zIndex = parent.zIndex + 1;
-          }
-
-          this.show = true;
-          this.transpose();
-
-          if (this.isRoot) {
-            document.documentElement.style.overflow = "hidden";
-            document.addEventListener("keydown", this.closeOnEscKey);
-          }
-
-          this.openTimer = null;
-          this.$emit("opened", this);
-        }
-      },
-      // public; opens the context menu immediately
-      immediateOpen: function immediateOpen(event, caller, parent) {
-        this.cancelDelayedOpen();
-        this.abstractOpen(event, caller, parent);
-      },
-      // public; opens the context menu after some time (defined by the parent's delay prop); is used exclusively to open nested context menus
-      delayedOpen: function delayedOpen(event, caller, parent) {
-        var _this2 = this;
-
-        this.cancelDelayedOpen();
-        this.openTimer = setTimeout(function () {
-          _this2.abstractOpen(event, caller, parent);
-        }, parent.delay);
-      },
-      // public; cancels the request to open the context menu
-      cancelDelayedOpen: function cancelDelayedOpen() {
-        if (this.openTimer) {
-          clearTimeout(this.openTimer);
-          this.openTimer = null;
-        }
-      },
-      // the logics of context menu closing
-      abstractClose: function abstractClose() {
-        if (this.show) {
-          if (this.parent) {
-            this.parent.sub = null;
-          }
-
-          if (this.sub) {
-            this.sub.immediateClose();
-            this.sub = null;
-          }
-
-          if (this.isRoot) {
-            document.documentElement.style.overflow = "";
-            document.removeEventListener("keydown", this.closeOnEscKey);
-          }
-
-          this.show = false;
-          this.style.height = "auto";
-          this.zIndex = 100000;
-          this.closeTimer = null;
-          this.$emit("closed", this);
-        }
-      },
-      // public; closes the context menu (and its nested ones) immediately
-      immediateClose: function immediateClose() {
-        this.cancelDelayedClose();
-        this.abstractClose();
-      },
-      // public; closes the context menu (and its nested ones) after some time (defined by the parent's delay prop); is used exclusively to close nested context menus
-      delayedClose: function delayedClose() {
-        var _this3 = this;
-
-        this.cancelDelayedClose();
-        this.closeTimer = setTimeout(function () {
-          _this3.abstractClose();
-        }, this.parent.delay);
-      },
-      // public; cancels the request to close the context menu
-      cancelDelayedClose: function cancelDelayedClose() {
-        if (this.closeTimer) {
-          clearTimeout(this.closeTimer);
-          this.closeTimer = null;
-        }
-      },
-      // event listener callback that closes the most nested context menu among all the opened ones
-      closeOnEscKey: function closeOnEscKey(event) {
-        if (event.keyCode === 27) {
-          var nestedMost = this;
-
-          while (nestedMost.sub) {
-            nestedMost = nestedMost.sub;
-          }
-
-          nestedMost.immediateClose();
-        }
-      },
-      // cancels delayed closing of this context menu and all its parents
-      preventCollapsing: function preventCollapsing() {
-        var parent = this;
-
-        while (parent) {
-          parent.cancelDelayedClose();
-          parent = parent.parent;
-        }
-      },
-      // shifts and shrinks (when necessary) the context menu
-      transpose: function transpose() {
-        var _this4 = this;
-
-        if (this.caller) {
-          this.style.left = "".concat(this.caller.getBoundingClientRect().right, "px");
-          this.style.top = "".concat(this.caller.getBoundingClientRect().top, "px");
-        } else {
-          this.style.left = "".concat(this.event.clientX, "px");
-          this.style.top = "".concat(this.event.clientY, "px");
-        }
-
-        this.style.height = "auto";
-        this.$nextTick(function () {
-          var viewportWidth = _this4.overlayElement.getBoundingClientRect().width;
-
-          var viewportHeight = _this4.overlayElement.getBoundingClientRect().height;
-
-          var cmWidth = _this4.wrapperElement.getBoundingClientRect().width;
-
-          var cmHeight = _this4.wrapperElement.getBoundingClientRect().height;
-
-          var furthestX = _this4.wrapperElement.getBoundingClientRect().right;
-
-          var furthestY = _this4.wrapperElement.getBoundingClientRect().bottom;
-
-          if (furthestX > viewportWidth) {
-            if (_this4.shift === "x" || _this4.shift === "both") {
-              if (_this4.caller) {
-                _this4.style.left = "".concat(_this4.caller.getBoundingClientRect().left - cmWidth, "px");
-              } else {
-                _this4.style.left = "".concat(parseFloat(_this4.style.left) - cmWidth, "px");
-              }
-            } else {
-              _this4.style.left = "".concat(viewportWidth - cmWidth, "px");
-            }
-          }
-
-          if (furthestY > viewportHeight) {
-            if (_this4.shift === "y" || _this4.shift === "both") {
-              if (_this4.caller) {
-                _this4.style.top = "".concat(_this4.caller.getBoundingClientRect().bottom - cmHeight, "px");
-              } else {
-                _this4.style.top = "".concat(parseFloat(_this4.style.top) - cmHeight, "px");
-              }
-            } else {
-              _this4.style.top = "".concat(viewportHeight - cmHeight, "px");
-            }
-          }
-
-          if (parseFloat(_this4.style.top) < 0) {
-            _this4.style.top = "0px";
-
-            if (cmHeight > viewportHeight) {
-              _this4.style.height = "".concat(viewportHeight, "px");
-            }
-          }
-        });
-      }
-    }
-  };
-
-  /* script */
-  const __vue_script__$1 = script$1;
-
-  /* template */
-  var __vue_render__$1 = function() {
-    var _vm = this;
-    var _h = _vm.$createElement;
-    var _c = _vm._self._c || _h;
-    return _vm.show
-      ? _c(
-          "context-menu-overlay",
-          {
-            ref: "overlay",
-            attrs: {
-              "is-root": _vm.isRoot,
-              "z-index": _vm.zIndex,
-              penetrable: _vm.penetrable
-            },
-            on: { close: _vm.immediateClose }
-          },
-          [
-            _c(
-              "div",
-              {
-                ref: "wrapper",
-                staticClass: "context-menu-wrapper",
-                class: { root: _vm.isRoot, nested: !_vm.isRoot },
-                style: _vm.style,
-                on: {
-                  mouseenter: _vm.preventCollapsing,
-                  mousedown: function($event) {
-                    $event.stopPropagation();
-                  }
-                }
-              },
-              [_c("div", { staticClass: "context-menu" }, [_vm._t("default")], 2)]
-            )
-          ]
-        )
-      : _vm._e()
-  };
-  var __vue_staticRenderFns__$1 = [];
-  __vue_render__$1._withStripped = true;
-
-    /* style */
-    const __vue_inject_styles__$1 = function (inject) {
-      if (!inject) return
-      inject("data-v-712aa820_0", { source: "\n.context-menu-wrapper[data-v-712aa820] {\n    position: absolute;\n    pointer-events: initial;\n}\n.context-menu[data-v-712aa820] {\n    box-sizing: border-box;\n    height: 100%;\n    overflow: auto;\n}\n", map: {"version":3,"sources":["/home/matt/projects/vue-custom-context-menu/src/components/ContextMenu.vue"],"names":[],"mappings":";AAwSA;IACA,kBAAA;IACA,uBAAA;AACA;AAEA;IACA,sBAAA;IACA,YAAA;IACA,cAAA;AACA","file":"ContextMenu.vue","sourcesContent":["<template>\n<context-menu-overlay\n    v-if=\"show\"\n    ref=\"overlay\"\n\n    :is-root=\"isRoot\"\n    :z-index=\"zIndex\"\n    :penetrable=\"penetrable\"\n\n    @close=\"immediateClose\"\n>\n    <div\n        ref=\"wrapper\"\n        class=\"context-menu-wrapper\"\n        :class=\"{ root: isRoot, nested: !isRoot }\"\n        :style=\"style\"\n\n        @mouseenter=\"preventCollapsing\"\n        @mousedown.stop\n    >\n        <div class=\"context-menu\">\n            <slot></slot>\n        </div>\n    </div>\n</context-menu-overlay>\n</template>\n\n<script>\nimport ContextMenuOverlay from \"./ContextMenuOverlay.vue\";\n\nexport default {\n    components: {\n        ContextMenuOverlay\n    },\n\n    props: {\n        penetrable: {\n            type: Boolean,\n            default: false\n        },\n\n        shift: {\n            type: String,\n            default: \"x\",\n            validator: (value) => [\"fit\", \"x\", \"y\", \"both\"].includes(value)\n        },\n\n        delay: {\n            type: Number,\n            default: 500,\n            validator: (value) => value > 0\n        }\n    },\n\n    computed: {\n        root: { // the root context menu instance (the one that is all the nested ones' ancestor)\n            cache: false, // must be recalculated each time because the same context menu may be opened either as a root or as a nested one\n            get() {\n                return this.isRoot\n                    ? this\n                    : (() => {\n                        let parent = this;\n                        while (parent) {\n                            var root = parent;\n                            parent = parent.parent;\n                        }\n\n                        return root;\n                    })();\n            }\n        },\n\n        overlayElement: {\n            cache: false, // no reactive data to rely on -> must be recalculated each time\n            get() {\n                return this.$refs.overlay.$el;\n            }\n        },\n\n        wrapperElement: {\n            cache: false, // no reactive data to rely on -> must be recalculated each time\n            get() {\n                return this.$refs.wrapper;\n            }\n        }\n    },\n\n    data() {\n        return {\n            show: false,\n\n            event: undefined, // set on open; don't reset because is might be used even after the context menu closed\n            caller: undefined, // set on open; don't reset; stores the context menu item that opened this (nested) context menu\n\n            isRoot: true, // the context menu is root if it's not nested\n            zIndex: 100000, // incremented on open so nested context menus always spawn above each other\n\n            style: {\n                left: 0,\n                top: 0,\n                height: \"auto\"\n            },\n\n            parent: null, // only set for nested context menus\n            sub: null, // only set for parents; stores the nested context menu instance\n\n            openTimer: null,\n            closeTimer: null\n        }\n    },\n\n    methods: {\n        // the logics of context menu opening\n        abstractOpen(event, caller, parent) {\n            // don't open a nested context menu if its parent is closed\n            if (parent && !parent.show) return;\n\n            if (!this.show) {\n                this.event = event;\n                this.caller = caller;\n\n                if (parent) {\n                    this.parent = parent;\n                    this.parent.sub = this;\n\n                    this.isRoot = false;\n                    this.zIndex = parent.zIndex + 1;\n                }\n\n                this.show = true;\n                this.transpose();\n\n                if (this.isRoot) {\n                    document.documentElement.style.overflow = \"hidden\";\n                    document.addEventListener(\"keydown\", this.closeOnEscKey);\n                }\n\n                this.openTimer = null;\n                this.$emit(\"opened\", this);\n            }\n        },\n\n        // public; opens the context menu immediately\n        immediateOpen(event, caller, parent) {\n            this.cancelDelayedOpen();\n            this.abstractOpen(event, caller, parent);\n        },\n\n        // public; opens the context menu after some time (defined by the parent's delay prop); is used exclusively to open nested context menus\n        delayedOpen(event, caller, parent) {\n            this.cancelDelayedOpen();\n\n            this.openTimer = setTimeout(() => {\n                this.abstractOpen(event, caller, parent);\n            }, parent.delay);\n        },\n\n        // public; cancels the request to open the context menu\n        cancelDelayedOpen() {\n            if (this.openTimer) {\n                clearTimeout(this.openTimer);\n                this.openTimer = null;\n            }\n        },\n\n        // the logics of context menu closing\n        abstractClose() {\n            if (this.show) {\n                if (this.parent) {\n                    this.parent.sub = null;\n                }\n\n                if (this.sub) {\n                    this.sub.immediateClose();\n                    this.sub = null;\n                }\n\n                if (this.isRoot) {\n                    document.documentElement.style.overflow = \"\";\n                    document.removeEventListener(\"keydown\", this.closeOnEscKey);\n                }\n\n                this.show = false;\n                this.style.height = \"auto\";\n                this.zIndex = 100000;\n\n                this.closeTimer = null;\n                this.$emit(\"closed\", this);\n            }\n        },\n\n        // public; closes the context menu (and its nested ones) immediately\n        immediateClose() {\n            this.cancelDelayedClose();\n            this.abstractClose();\n        },\n\n        // public; closes the context menu (and its nested ones) after some time (defined by the parent's delay prop); is used exclusively to close nested context menus\n        delayedClose() {\n            this.cancelDelayedClose();\n\n            this.closeTimer = setTimeout(() => {\n                this.abstractClose();\n            }, this.parent.delay);\n        },\n\n        // public; cancels the request to close the context menu\n        cancelDelayedClose() {\n            if (this.closeTimer) {\n                clearTimeout(this.closeTimer);\n                this.closeTimer = null;\n            }\n        },\n\n        // event listener callback that closes the most nested context menu among all the opened ones\n        closeOnEscKey(event) {\n            if (event.keyCode === 27) {\n                let nestedMost = this;\n                while (nestedMost.sub) {\n                    nestedMost = nestedMost.sub;\n                }\n\n                nestedMost.immediateClose();\n            }\n        },\n\n        // cancels delayed closing of this context menu and all its parents\n        preventCollapsing() {\n            let parent = this;\n\n            while (parent) {\n                parent.cancelDelayedClose();\n                parent = parent.parent;\n            }\n        },\n\n        // shifts and shrinks (when necessary) the context menu\n        transpose() {\n            if (this.caller) {\n                this.style.left = `${ this.caller.getBoundingClientRect().right }px`;\n                this.style.top = `${ this.caller.getBoundingClientRect().top }px`;\n            } else {\n                this.style.left = `${ this.event.clientX }px`;\n                this.style.top = `${ this.event.clientY }px`;\n            }\n\n            this.style.height = \"auto\";\n\n            this.$nextTick(() => {\n                let viewportWidth = this.overlayElement.getBoundingClientRect().width;\n                let viewportHeight = this.overlayElement.getBoundingClientRect().height;\n\n                let cmWidth = this.wrapperElement.getBoundingClientRect().width;\n                let cmHeight = this.wrapperElement.getBoundingClientRect().height;\n\n                let furthestX = this.wrapperElement.getBoundingClientRect().right;\n                let furthestY = this.wrapperElement.getBoundingClientRect().bottom;\n\n                if (furthestX > viewportWidth) {\n                    if (this.shift === \"x\" || this.shift === \"both\") {\n                        if (this.caller) {\n                            this.style.left = `${ this.caller.getBoundingClientRect().left - cmWidth }px`;\n                        } else {\n                            this.style.left = `${ parseFloat(this.style.left) - cmWidth }px`;\n                        }\n                    } else {\n                        this.style.left = `${ viewportWidth - cmWidth }px`;\n                    }\n                }\n\n                if (furthestY > viewportHeight) {\n                    if (this.shift === \"y\" || this.shift === \"both\") {\n                        if (this.caller) {\n                            this.style.top = `${ this.caller.getBoundingClientRect().bottom - cmHeight }px`;\n                        } else {\n                            this.style.top = `${ parseFloat(this.style.top) - cmHeight }px`;\n                        }\n                    } else {\n                        this.style.top = `${ viewportHeight - cmHeight }px`;\n                    }\n                }\n\n                if (parseFloat(this.style.top) < 0) {\n                    this.style.top = \"0px\";\n\n                    if (cmHeight > viewportHeight) {\n                        this.style.height = `${ viewportHeight }px`;\n                    }\n                }\n            });\n        }\n    }\n}\n</script>\n\n<style scoped>\n.context-menu-wrapper {\n    position: absolute;\n    pointer-events: initial;\n}\n\n.context-menu {\n    box-sizing: border-box;\n    height: 100%;\n    overflow: auto;\n}\n</style>\n"]}, media: undefined });
-
-    };
-    /* scoped */
-    const __vue_scope_id__$1 = "data-v-712aa820";
-    /* module identifier */
-    const __vue_module_identifier__$1 = undefined;
-    /* functional template */
-    const __vue_is_functional_template__$1 = false;
-    /* style inject SSR */
-    
-
-    
-    var ContextMenuComponent = normalizeComponent_1(
-      { render: __vue_render__$1, staticRenderFns: __vue_staticRenderFns__$1 },
-      __vue_inject_styles__$1,
-      __vue_script__$1,
-      __vue_scope_id__$1,
-      __vue_is_functional_template__$1,
-      __vue_module_identifier__$1,
-      browser,
-      undefined
-    );
-
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
   var script$2 = {
-    props: {
-      action: {
-        type: Function,
-        "default": function _default() {}
-      },
-      disabled: {
-        type: Boolean,
-        "default": false
-      }
-    },
-    // The following piece of code leads to a bug with positioning of overflowed context menus. TODO reconsider
-    // // recalculate context menu's position and height when new items are added
-    // created() {
-    //     if (this.cm.show) {
-    //         this.$nextTick(() => {
-    //             this.cm.transpose();
-    //         });
-    //     }
-    // },
-    //
-    // // recalculate context menu's position and height when existeing items are removed
-    // beforeDestroy() {
-    //     if (this.cm.show) {
-    //         this.$nextTick(() => {
-    //             this.cm.transpose();
-    //         });
-    //     }
-    // },
-    data: function data() {
-      return {
-        calls: undefined // is set from the v-context-menu.js; points to the nested context menu this item opens
+      props: {
+          isRoot: {
+              type: Boolean,
+              required: true
+          },
 
-      };
-    },
-    computed: {
-      cm: function cm() {
-        // the context menu instance this item belongs to
-        return this.$parent.$parent;
-      },
-      isCaller: function isCaller() {
-        return !!this.calls;
-      },
-      isDisabled: function isDisabled() {
-        return this.calls === null || this.disabled;
-      }
-    },
-    watch: {
-      // cancel opening of the nested context menu (or close it if it's already opened) when the item suddenly becomes disabled
-      isDisabled: function isDisabled(newValue) {
-        var _this = this;
+          zIndex: {
+              type: Number,
+              required: true
+          },
 
-        if (newValue === true && this.isCaller) {
-          this.calls.cancelDelayedOpen(); // setTimeout helps to avoid some subtle bugs by allowing other actions to complete first
-
-          setTimeout(function () {
-            _this.calls.immediateClose();
-          }, 0);
-        }
-      },
-      // when the nested context menu changes and the old one was about to open then cancel its opening
-      calls: function calls(newValue, oldValue) {
-        if (this.isCaller && oldValue) {
-          oldValue.cancelDelayedOpen(); // this.calls.immediateClose(); <- no need in this here because it's handled in the directive's update hook
-        }
-      }
-    },
-    methods: {
-      itemSelected: function itemSelected(event) {
-        // don't do anything for disabled items
-        if (this.isDisabled) return; // if the cursor entered a caller item
-
-        if (this.isCaller) {
-          // if there's already an opened sub and it's the same that this item calls
-          if (this.cm.sub === this.calls) {
-            // then cancel its closing
-            this.calls.cancelDelayedClose(); // if there's no opened sub or another (not the one this item calls) sub is opened
-          } else {
-            // if another sub is opened
-            if (this.cm.sub) {
-              // delay closing of the opened one
-              this.cm.sub.delayedClose();
-            } // delay opening of the target one
-
-
-            this.calls.delayedOpen(event, this.$el, this.cm);
-          } // if the cursor entered a not-a-caller item
-
-        } else {
-          // and if there's an opened sub
-          if (this.cm.sub) {
-            // then just delay its closing if it hadn't been initiated already
-            if (!this.cm.sub.closeTimer) {
-              this.cm.sub.delayedClose();
-            }
+          penetrable: {
+              type: Boolean,
+              required: true
           }
-        }
       },
-      selectionAborted: function selectionAborted(event) {
-        // don't do anything for disabled items
-        if (this.isDisabled) return; // only track "mouseleave" for callers
 
-        if (this.isCaller) {
-          // cancel delayed opening of the target cm (it has been initiated when the cursor entered this item)
-          this.calls.cancelDelayedOpen();
-        }
-      },
-      itemTriggered: function itemTriggered(event) {
-        var _this2 = this;
+      methods: {
+          close(event) {
+              // the next line doesn't allow to close the context menu if the native one was requested
+              if (event.which === 3 && event.altKey) return;
 
-        // don't do anything for disabled items
-        if (this.isDisabled) return; // if a caller item is pressed
+              // if the overlay is penetrable then a new context menu will be opened because the mousedown event triggers first
+              // else the overlay won't yet be closed when the contextmenu event takes place hence no other context menus will open
+              if (this.penetrable) {
+                  this.$emit("close");
+              } else {
+                  event.stopPropagation();
 
-        if (this.isCaller) {
-          // if there's already an opened sub and it's not the same that this item calls (or if there's no opened sub at all)
-          if (this.cm.sub !== this.calls) {
-            // if there's an opened sub already
-            if (this.cm.sub) {
-              // then immediately close it
-              this.cm.sub.immediateClose();
-            } // immediately open the target context menu
-
-
-            this.calls.immediateOpen(event, this.$el, this.cm);
-          } // if a not-a-caller item is pressed
-
-        } else {
-          // don't do anything if the native context menu was requested
-          if (event.which === 3 && event.altKey) return; // perform the item's action
-
-          this.action(this.cm.event.target, this.cm); // close the root context menu (thus closing all the nested as well) (setTimeout is used so that the contextmenu event is triggered when the context menu isn't closed yet)
-
-          setTimeout(function () {
-            _this2.cm.root.immediateClose();
-          }, 0);
-        }
+                  setTimeout(() => {
+                      this.$emit("close");
+                  }, 0);
+              }
+          }
       }
+  };
+
+  const _withId$1 = /*#__PURE__*/vue.withScopeId("data-v-fca6041c");
+
+  const render$2 = /*#__PURE__*/_withId$1((_ctx, _cache, $props, $setup, $data, $options) => {
+    const _directive_context_menu = vue.resolveDirective("context-menu");
+
+    return vue.withDirectives((vue.openBlock(), vue.createBlock("div", {
+      class: ["context-menu-overlay", { root: $props.isRoot, nested: !$props.isRoot }],
+      style: { zIndex: $props.zIndex },
+      onMousedown: _cache[1] || (_cache[1] = $event => ($options.close($event)))
+    }, [
+      vue.renderSlot(_ctx.$slots, "default")
+    ], 38 /* CLASS, STYLE, HYDRATE_EVENTS */)), [
+      [_directive_context_menu, null]
+    ])
+  });
+
+  function styleInject(css, ref) {
+    if ( ref === void 0 ) ref = {};
+    var insertAt = ref.insertAt;
+
+    if (!css || typeof document === 'undefined') { return; }
+
+    var head = document.head || document.getElementsByTagName('head')[0];
+    var style = document.createElement('style');
+    style.type = 'text/css';
+
+    if (insertAt === 'top') {
+      if (head.firstChild) {
+        head.insertBefore(style, head.firstChild);
+      } else {
+        head.appendChild(style);
+      }
+    } else {
+      head.appendChild(style);
     }
-  };
 
-  /* script */
-  const __vue_script__$2 = script$2;
+    if (style.styleSheet) {
+      style.styleSheet.cssText = css;
+    } else {
+      style.appendChild(document.createTextNode(css));
+    }
+  }
 
-  /* template */
-  var __vue_render__$2 = function() {
-    var _vm = this;
-    var _h = _vm.$createElement;
-    var _c = _vm._self._c || _h;
-    return _c(
-      "div",
-      {
-        staticClass: "context-menu-item",
-        class: { caller: _vm.isCaller, disabled: _vm.isDisabled },
-        on: {
-          mouseenter: _vm.itemSelected,
-          mouseleave: _vm.selectionAborted,
-          mousedown: _vm.itemTriggered
-        }
+  var css_248z$1 = "\n.context-menu-overlay[data-v-fca6041c] {\n    position: fixed;\n    top: 0;\n    left: 0;\n    display: block;\n    width: 100%;\n    height: 100%;\n    overflow: hidden;\n}\n.nested[data-v-fca6041c] {\n    pointer-events: none;\n}\n";
+  styleInject(css_248z$1);
+
+  script$2.render = render$2;
+  script$2.__scopeId = "data-v-fca6041c";
+  script$2.__file = "src/components/ContextMenuOverlay.vue";
+
+  var script$1 = {
+      components: {
+          ContextMenuOverlay: script$2
       },
-      [_vm._t("default")],
-      2
-    )
+
+      props: {
+          penetrable: {
+              type: Boolean,
+              default: false
+          },
+
+          shift: {
+              type: String,
+              default: "x",
+              validator: (value) => ["fit", "x", "y", "both"].includes(value)
+          },
+
+          delay: {
+              type: Number,
+              default: 500,
+              validator: (value) => value > 0
+          }
+      },
+
+      computed: {
+          root: { // the root context menu instance (the one that is all the nested ones' ancestor)
+              cache: false, // must be recalculated each time because the same context menu may be opened either as a root or as a nested one
+              get() {
+                  return this.isRoot
+                      ? this
+                      : (() => {
+                          let parent = this;
+                          while (parent) {
+                              var root = parent;
+                              parent = parent.parent;
+                          }
+
+                          return root;
+                      })();
+              }
+          },
+
+          overlayElement: {
+              cache: false, // no reactive data to rely on -> must be recalculated each time
+              get() {
+                  return this.$refs.overlay.$el;
+              }
+          },
+
+          wrapperElement: {
+              cache: false, // no reactive data to rely on -> must be recalculated each time
+              get() {
+                  return this.$refs.wrapper;
+              }
+          }
+      },
+
+      data() {
+          return {
+              show: false,
+
+              event: undefined, // set on open; don't reset because is might be used even after the context menu closed
+              caller: undefined, // set on open; don't reset; stores the context menu item that opened this (nested) context menu
+
+              isRoot: true, // the context menu is root if it's not nested
+              zIndex: 100000, // incremented on open so nested context menus always spawn above each other
+
+              style: {
+                  left: 0,
+                  top: 0,
+                  height: "auto"
+              },
+
+              parent: null, // only set for nested context menus
+              sub: null, // only set for parents; stores the nested context menu instance
+
+              openTimer: null,
+              closeTimer: null
+          }
+      },
+
+      methods: {
+          // the logics of context menu opening
+          abstractOpen(event, caller, parent) {
+              // don't open a nested context menu if its parent is closed
+              if (parent && !parent.show) return;
+
+              if (!this.show) {
+                  this.event = event;
+                  this.caller = caller;
+
+                  if (parent) {
+                      this.parent = parent;
+                      this.parent.sub = this;
+
+                      this.isRoot = false;
+                      this.zIndex = parent.zIndex + 1;
+                  }
+
+                  this.show = true;
+                  this.transpose();
+
+                  if (this.isRoot) {
+                      document.documentElement.style.overflow = "hidden";
+                      document.addEventListener("keydown", this.closeOnEscKey);
+                  }
+
+                  this.openTimer = null;
+                  this.$emit("opened", this);
+              }
+          },
+
+          // public; opens the context menu immediately
+          immediateOpen(event, caller, parent) {
+              this.cancelDelayedOpen();
+              this.abstractOpen(event, caller, parent);
+          },
+
+          // public; opens the context menu after some time (defined by the parent's delay prop); is used exclusively to open nested context menus
+          delayedOpen(event, caller, parent) {
+              this.cancelDelayedOpen();
+
+              this.openTimer = setTimeout(() => {
+                  this.abstractOpen(event, caller, parent);
+              }, parent.delay);
+          },
+
+          // public; cancels the request to open the context menu
+          cancelDelayedOpen() {
+              if (this.openTimer) {
+                  clearTimeout(this.openTimer);
+                  this.openTimer = null;
+              }
+          },
+
+          // the logics of context menu closing
+          abstractClose() {
+              if (this.show) {
+                  if (this.parent) {
+                      this.parent.sub = null;
+                  }
+
+                  if (this.sub) {
+                      this.sub.immediateClose();
+                      this.sub = null;
+                  }
+
+                  if (this.isRoot) {
+                      document.documentElement.style.overflow = "";
+                      document.removeEventListener("keydown", this.closeOnEscKey);
+                  }
+
+                  this.show = false;
+                  this.style.height = "auto";
+                  this.zIndex = 100000;
+
+                  this.closeTimer = null;
+                  this.$emit("closed", this);
+              }
+          },
+
+          // public; closes the context menu (and its nested ones) immediately
+          immediateClose() {
+              this.cancelDelayedClose();
+              this.abstractClose();
+          },
+
+          // public; closes the context menu (and its nested ones) after some time (defined by the parent's delay prop); is used exclusively to close nested context menus
+          delayedClose() {
+              this.cancelDelayedClose();
+
+              this.closeTimer = setTimeout(() => {
+                  this.abstractClose();
+              }, this.parent.delay);
+          },
+
+          // public; cancels the request to close the context menu
+          cancelDelayedClose() {
+              if (this.closeTimer) {
+                  clearTimeout(this.closeTimer);
+                  this.closeTimer = null;
+              }
+          },
+
+          // event listener callback that closes the most nested context menu among all the opened ones
+          closeOnEscKey(event) {
+              if (event.keyCode === 27) {
+                  let nestedMost = this;
+                  while (nestedMost.sub) {
+                      nestedMost = nestedMost.sub;
+                  }
+
+                  nestedMost.immediateClose();
+              }
+          },
+
+          // cancels delayed closing of this context menu and all its parents
+          preventCollapsing() {
+              let parent = this;
+
+              while (parent) {
+                  parent.cancelDelayedClose();
+                  parent = parent.parent;
+              }
+          },
+
+          // shifts and shrinks (when necessary) the context menu
+          transpose() {
+              if (this.caller) {
+                  this.style.left = `${ this.caller.getBoundingClientRect().right }px`;
+                  this.style.top = `${ this.caller.getBoundingClientRect().top }px`;
+              } else {
+                  this.style.left = `${ this.event.clientX }px`;
+                  this.style.top = `${ this.event.clientY }px`;
+              }
+
+              this.style.height = "auto";
+
+              this.$nextTick(() => {
+                  let viewportWidth = this.overlayElement.getBoundingClientRect().width;
+                  let viewportHeight = this.overlayElement.getBoundingClientRect().height;
+
+                  let cmWidth = this.wrapperElement.getBoundingClientRect().width;
+                  let cmHeight = this.wrapperElement.getBoundingClientRect().height;
+
+                  let furthestX = this.wrapperElement.getBoundingClientRect().right;
+                  let furthestY = this.wrapperElement.getBoundingClientRect().bottom;
+
+                  if (furthestX > viewportWidth) {
+                      if (this.shift === "x" || this.shift === "both") {
+                          if (this.caller) {
+                              this.style.left = `${ this.caller.getBoundingClientRect().left - cmWidth }px`;
+                          } else {
+                              this.style.left = `${ parseFloat(this.style.left) - cmWidth }px`;
+                          }
+                      } else {
+                          this.style.left = `${ viewportWidth - cmWidth }px`;
+                      }
+                  }
+
+                  if (furthestY > viewportHeight) {
+                      if (this.shift === "y" || this.shift === "both") {
+                          if (this.caller) {
+                              this.style.top = `${ this.caller.getBoundingClientRect().bottom - cmHeight }px`;
+                          } else {
+                              this.style.top = `${ parseFloat(this.style.top) - cmHeight }px`;
+                          }
+                      } else {
+                          this.style.top = `${ viewportHeight - cmHeight }px`;
+                      }
+                  }
+
+                  if (parseFloat(this.style.top) < 0) {
+                      this.style.top = "0px";
+
+                      if (cmHeight > viewportHeight) {
+                          this.style.height = `${ viewportHeight }px`;
+                      }
+                  }
+              });
+          }
+      }
   };
-  var __vue_staticRenderFns__$2 = [];
-  __vue_render__$2._withStripped = true;
 
-    /* style */
-    const __vue_inject_styles__$2 = undefined;
-    /* scoped */
-    const __vue_scope_id__$2 = undefined;
-    /* module identifier */
-    const __vue_module_identifier__$2 = undefined;
-    /* functional template */
-    const __vue_is_functional_template__$2 = false;
-    /* style inject */
-    
-    /* style inject SSR */
-    
+  const _withId = /*#__PURE__*/vue.withScopeId("data-v-2cd1f2a4");
 
-    
-    var ContextMenuItemComponent = normalizeComponent_1(
-      { render: __vue_render__$2, staticRenderFns: __vue_staticRenderFns__$2 },
-      __vue_inject_styles__$2,
-      __vue_script__$2,
-      __vue_scope_id__$2,
-      __vue_is_functional_template__$2,
-      __vue_module_identifier__$2,
-      undefined,
-      undefined
-    );
+  vue.pushScopeId("data-v-2cd1f2a4");
+  const _hoisted_1 = { class: "context-menu" };
+  vue.popScopeId();
+
+  const render$1 = /*#__PURE__*/_withId((_ctx, _cache, $props, $setup, $data, $options) => {
+    const _component_context_menu_overlay = vue.resolveComponent("context-menu-overlay");
+
+    return ($data.show)
+      ? (vue.openBlock(), vue.createBlock(_component_context_menu_overlay, {
+          key: 0,
+          ref: "overlay",
+          "is-root": $data.isRoot,
+          "z-index": $data.zIndex,
+          penetrable: $props.penetrable,
+          onClose: $options.immediateClose
+        }, {
+          default: _withId(() => [
+            vue.createVNode("div", {
+              ref: "wrapper",
+              class: ["context-menu-wrapper", { root: $data.isRoot, nested: !$data.isRoot }],
+              style: $data.style,
+              onMouseenter: _cache[1] || (_cache[1] = (...args) => ($options.preventCollapsing && $options.preventCollapsing(...args))),
+              onMousedown: _cache[2] || (_cache[2] = vue.withModifiers(() => {}, ["stop"]))
+            }, [
+              vue.createVNode("div", _hoisted_1, [
+                vue.renderSlot(_ctx.$slots, "default")
+              ])
+            ], 38 /* CLASS, STYLE, HYDRATE_EVENTS */)
+          ]),
+          _: 3 /* FORWARDED */
+        }, 8 /* PROPS */, ["is-root", "z-index", "penetrable", "onClose"]))
+      : vue.createCommentVNode("v-if", true)
+  });
+
+  var css_248z = "\n.context-menu-wrapper[data-v-2cd1f2a4] {\n    position: absolute;\n    pointer-events: initial;\n}\n.context-menu[data-v-2cd1f2a4] {\n    box-sizing: border-box;\n    height: 100%;\n    overflow: auto;\n}\n";
+  styleInject(css_248z);
+
+  script$1.render = render$1;
+  script$1.__scopeId = "data-v-2cd1f2a4";
+  script$1.__file = "src/components/ContextMenu.vue";
+
+  var script = {
+      props: {
+          action: {
+              type: Function,
+              default: function() {}
+          },
+
+          disabled: {
+              type: Boolean,
+              default: false
+          }
+      },
+
+      // The following piece of code leads to a bug with positioning of overflowed context menus. TODO reconsider
+      // // recalculate context menu's position and height when new items are added
+      // created() {
+      //     if (this.cm.show) {
+      //         this.$nextTick(() => {
+      //             this.cm.transpose();
+      //         });
+      //     }
+      // },
+      //
+      // // recalculate context menu's position and height when existeing items are removed
+      // beforeDestroy() {
+      //     if (this.cm.show) {
+      //         this.$nextTick(() => {
+      //             this.cm.transpose();
+      //         });
+      //     }
+      // },
+
+      data() {
+          return {
+              calls: undefined, // is set from the v-context-menu.js; points to the nested context menu this item opens
+          }
+      },
+
+      computed: {
+          cm() { // the context menu instance this item belongs to
+              return this.$parent.$parent;
+          },
+
+          isCaller() {
+              return !!this.calls;
+          },
+
+          isDisabled() {
+              return this.calls === null || this.disabled;
+          }
+      },
+
+      watch: {
+          // cancel opening of the nested context menu (or close it if it's already opened) when the item suddenly becomes disabled
+          isDisabled(newValue) {
+              if (newValue === true && this.isCaller) {
+                  this.calls.cancelDelayedOpen();
+
+                  // setTimeout helps to avoid some subtle bugs by allowing other actions to complete first
+                  setTimeout(() => {
+                      this.calls.immediateClose();
+                  }, 0);
+              }
+          },
+
+          // when the nested context menu changes and the old one was about to open then cancel its opening
+          calls(newValue, oldValue) {
+              if (this.isCaller && oldValue) {
+                  oldValue.cancelDelayedOpen();
+                  // this.calls.immediateClose(); <- no need in this here because it's handled in the directive's update hook
+              }
+          }
+      },
+
+      methods: {
+          itemSelected(event) {
+              // don't do anything for disabled items
+              if (this.isDisabled) return;
+
+              // if the cursor entered a caller item
+              if (this.isCaller) {
+                  // if there's already an opened sub and it's the same that this item calls
+                  if (this.cm.sub === this.calls) {
+                      // then cancel its closing
+                      this.calls.cancelDelayedClose();
+                  // if there's no opened sub or another (not the one this item calls) sub is opened
+                  } else {
+                      // if another sub is opened
+                      if (this.cm.sub) {
+                          // delay closing of the opened one
+                          this.cm.sub.delayedClose();
+                      }
+
+                      // delay opening of the target one
+                      this.calls.delayedOpen(event, this.$el, this.cm);
+                  }
+              // if the cursor entered a not-a-caller item
+              } else {
+                  // and if there's an opened sub
+                  if (this.cm.sub) {
+                      // then just delay its closing if it hadn't been initiated already
+                      if (!this.cm.sub.closeTimer) {
+                          this.cm.sub.delayedClose();
+                      }
+                  }
+              }
+          },
+
+          selectionAborted(event) {
+              // don't do anything for disabled items
+              if (this.isDisabled) return;
+
+              // only track "mouseleave" for callers
+              if (this.isCaller) {
+                  // cancel delayed opening of the target cm (it has been initiated when the cursor entered this item)
+                  this.calls.cancelDelayedOpen();
+              }
+          },
+
+          itemTriggered(event) {
+              // don't do anything for disabled items
+              if (this.isDisabled) return;
+
+              // if a caller item is pressed
+              if (this.isCaller) {
+                  // if there's already an opened sub and it's not the same that this item calls (or if there's no opened sub at all)
+                  if (this.cm.sub !== this.calls) {
+                      // if there's an opened sub already
+                      if (this.cm.sub) {
+                          // then immediately close it
+                          this.cm.sub.immediateClose();
+                      }
+
+                      // immediately open the target context menu
+                      this.calls.immediateOpen(event, this.$el, this.cm);
+                  }
+              // if a not-a-caller item is pressed
+              } else {
+                  // don't do anything if the native context menu was requested
+                  if (event.which === 3 && event.altKey) return;
+
+                  // perform the item's action
+                  this.action(this.cm.event.target, this.cm);
+
+                  // close the root context menu (thus closing all the nested as well) (setTimeout is used so that the contextmenu event is triggered when the context menu isn't closed yet)
+                  setTimeout(() => {
+                      this.cm.root.immediateClose();
+                  }, 0);
+              }
+          }
+      }
+  };
+
+  function render(_ctx, _cache, $props, $setup, $data, $options) {
+    return (vue.openBlock(), vue.createBlock("div", {
+      class: ["context-menu-item", { caller: $options.isCaller, disabled: $options.isDisabled }],
+      onMouseenter: _cache[1] || (_cache[1] = (...args) => ($options.itemSelected && $options.itemSelected(...args))),
+      onMouseleave: _cache[2] || (_cache[2] = (...args) => ($options.selectionAborted && $options.selectionAborted(...args))),
+      onMousedown: _cache[3] || (_cache[3] = (...args) => ($options.itemTriggered && $options.itemTriggered(...args)))
+    }, [
+      vue.renderSlot(_ctx.$slots, "default")
+    ], 34 /* CLASS, HYDRATE_EVENTS */))
+  }
+
+  script.render = render;
+  script.__file = "src/components/ContextMenuItem.vue";
 
   var Plugin = {
     install: function install(Vue) {
       Vue.directive("context-menu", ContextMenuDirective);
-      Vue.component("ContextMenu", ContextMenuComponent);
-      Vue.component("ContextMenuItem", ContextMenuItemComponent);
+      Vue.component("ContextMenu", script$1);
+      Vue.component("ContextMenuItem", script);
     }
   }; // auto-install when Vue is found (eg. in a browser via <script> tag)
 
@@ -975,4 +757,4 @@
 
   return Plugin;
 
-}));
+})));

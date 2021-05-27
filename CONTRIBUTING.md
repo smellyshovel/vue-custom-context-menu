@@ -13,11 +13,11 @@ First of all, thank you. I really do appreciate it!
 Nowadays the workflow would be something like the follows
 
 1. Fork the repo and clone it
-1. `$ npm i`
-1. `$ npm run dev`
+1. `$ npm i` or `$ yarn install`
+1. `$ npm run dev` or `$ yarn dev`
 1. Make changes...
 1. <s>`$ npm run test`</s> (will only become true when we're done with automated testing issues we're currently experiencing)
-1. `$ npm run build`
+1. `$ npm run build` or `$ yarn build`
 1. Commit, push and start a pull request
 
 No need to update the NPM-package version, I'll do it myself (since the process isn't automated yet).
